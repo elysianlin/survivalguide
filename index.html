@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Semester Survival Kit — Your academic command center for BYU-Idaho students.">
+  <title>Dashboard | Semester Survival Kit</title>
+
+  <!--
+    CSS Architecture:
+      main.css uses @import to load all partials in order:
+        1. variables.css   — design tokens
+        2. global.css      — resets, utilities, base elements
+        3. header.css      — fixed nav bar
+        4. footer.css      — site footer
+        5. pages.css       — page/feature-level styles
+  -->
+  <link rel="stylesheet" href="css/main.css">
+</head>
+<body>
+
+  <!-- ===== HEADER ===== -->
+  <header class="site-header" role="banner">
+    <div class="header-inner">
+
+      <a href="index.html" class="site-logo" aria-label="Semester Survival Kit home">
+        <div class="logo-icon" aria-hidden="true">📚</div>
+        <span class="logo-text">Semester <span>Survival Kit</span></span>
+      </a>
+
+      <nav class="site-nav" aria-label="Primary navigation">
+        <a href="index.html"   class="nav-link"><span class="nav-icon">🏠</span> Dashboard</a>
+        <a href="planner.html" class="nav-link"><span class="nav-icon">📝</span> Planner</a>
+        <a href="gpa.html"     class="nav-link"><span class="nav-icon">📊</span> GPA</a>
+      </nav>
+
+      <div class="header-actions">
+        <div class="gpa-pill" aria-label="Current GPA">
+          <span>GPA</span>
+          <span class="gpa-value" id="header-gpa">—</span>
+        </div>
+        <button class="theme-toggle" id="theme-toggle" aria-label="Toggle dark mode">🌙</button>
+      </div>
+
+      <!-- Mobile hamburger -->
+      <button class="hamburger" id="hamburger" aria-label="Open menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Mobile nav drawer -->
+  <nav class="mobile-nav" id="mobile-nav" aria-label="Mobile navigation">
+    <a href="index.html"   class="nav-link"><span class="nav-icon">🏠</span> Dashboard</a>
+    <a href="planner.html" class="nav-link"><span class="nav-icon">📝</span> Planner</a>
+    <a href="gpa.html"     class="nav-link"><span class="nav-icon">📊</span> GPA Calculator</a>
+  </nav>
+
+  <!-- ===== MAIN ===== -->
+  <div class="page-wrapper">
+    <main class="main-content" id="main-content">
+
+      <!-- Page heading -->
+      <div class="flex items-center justify-between" style="margin-bottom: var(--sp-8)">
+        <div>
+          <h1 style="font-size: var(--fs-3xl); margin-bottom: var(--sp-2)">Dashboard</h1>
+          <p id="greeting" class="text-muted">Loading…</p>
+        </div>
+        <a href="planner.html" class="btn btn-primary">
+          + New Assignment
+        </a>
+      </div>
+
+      <!-- Stats row -->
+      <div class="stats-grid fade-in-up">
+        <div class="stat-card" style="--card-accent: var(--clr-primary)">
+          <div class="stat-icon">📋</div>
+          <div class="stat-value" id="stat-total">0</div>
+          <div class="stat-label">Total Tasks</div>
+        </div>
+        <div class="stat-card" style="--card-accent: var(--clr-success)">
+          <div class="stat-icon">✅</div>
+          <div class="stat-value" id="stat-done">0</div>
+          <div class="stat-label">Completed</div>
+        </div>
+        <div class="stat-card" style="--card-accent: var(--clr-accent)">
+          <div class="stat-icon">⏳</div>
+          <div class="stat-value" id="stat-pending">0</div>
+          <div class="stat-label">Pending</div>
+        </div>
+        <div class="stat-card" style="--card-accent: var(--clr-danger)">
+          <div class="stat-icon">🔥</div>
+          <div class="stat-value" id="stat-overdue">0</div>
+          <div class="stat-label">Overdue</div>
+        </div>
+      </div>
+
+      <!-- Main dashboard grid -->
+      <div class="dashboard-grid">
+
+        <!-- Left column -->
+        <div class="dashboard-main">
+
+          <!-- Daily Quote -->
+          <div class="quote-card fade-in-up">
+            <button class="quote-refresh" id="quote-refresh" aria-label="Next quote" title="Next quote">↻</button>
+            <blockquote>
+              <p class="quote-text" id="quote-text">Loading quote…</p>
+              <footer class="quote-author" id="quote-author"></footer>
+            </blockquote>
+          </div>
+
+          <!-- Recent Assignments -->
+          <div class="card fade-in-up">
+            <div class="flex items-center justify-between" style="margin-bottom: var(--sp-4)">
+              <h2 style="font-size: var(--fs-xl)">Upcoming Assignments</h2>
+              <a href="planner.html" class="btn btn-ghost btn-sm">View all →</a>
+            </div>
+            <div id="recent-assignments">
+              <div class="empty-state">
+                <div class="empty-icon">📝</div>
+                <p>No assignments yet. <a href="planner.html">Add one →</a></p>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Right sidebar -->
+        <div class="dashboard-sidebar">
+
+          <!-- Exam Countdown -->
+          <div class="card fade-in-up">
+            <div class="flex items-center justify-between" style="margin-bottom: var(--sp-4)">
+              <h2 style="font-size: var(--fs-lg)">Exam Countdown</h2>
+              <a href="planner.html#exams" class="btn btn-ghost btn-sm">+ Add</a>
+            </div>
+            <div id="countdown-list"></div>
+          </div>
+
+          <!-- Pomodoro Timer -->
+          <div class="pomodoro-card card fade-in-up">
+            <h2 style="font-size: var(--fs-lg); margin-bottom: var(--sp-2)">Study Timer</h2>
+            <p class="text-sm text-muted" style="margin-bottom: var(--sp-4)">25 min focus · 5 min break</p>
+
+            <div class="pomodoro-display">
+              <svg class="pomodoro-svg" viewBox="0 0 160 160" aria-hidden="true">
+                <circle class="pomodoro-track" cx="80" cy="80" r="70"/>
+                <circle class="pomodoro-progress" id="pomodoro-progress" cx="80" cy="80" r="70"/>
+              </svg>
+              <div class="pomodoro-time-text">
+                <div class="pomodoro-time" id="pomodoro-time" aria-live="polite">25:00</div>
+                <div class="pomodoro-mode-label" id="pomodoro-mode">📚 Study</div>
+              </div>
+            </div>
+
+            <div class="pomodoro-controls">
+              <button class="btn btn-secondary btn-icon" id="pomodoro-reset" title="Reset">⏮</button>
+              <button class="btn btn-primary" id="pomodoro-start" style="min-width:80px">▶</button>
+            </div>
+
+            <div class="pomodoro-sessions" id="pomodoro-dots" aria-label="Completed sessions"></div>
+          </div>
+
+        </div>
+      </div><!-- /dashboard-grid -->
+
+    </main>
+  </div><!-- /page-wrapper -->
+
+  <!-- ===== FOOTER ===== -->
+  <footer class="site-footer" role="contentinfo">
+    <div class="footer-inner">
+
+      <div class="footer-brand">
+        <div class="logo-text">Semester <span>Survival Kit</span></div>
+        <p class="footer-tagline">Your academic command center — built for BYU-Idaho students who refuse to fall behind.</p>
+        <div>
+          <p class="text-xs text-muted" style="margin-bottom: var(--sp-2)">Get weekly study tips:</p>
+          <form class="footer-subscribe" id="newsletter-form" novalidate>
+            <input type="email" placeholder="your@email.com" aria-label="Email address for newsletter">
+            <button type="submit" class="btn btn-primary btn-sm">Subscribe</button>
+          </form>
+          <p class="subscribe-message" id="subscribe-msg" aria-live="polite"></p>
+        </div>
+      </div>
+
+      <div class="footer-col">
+        <h4>Pages</h4>
+        <ul class="footer-links">
+          <li><a href="index.html">Dashboard</a></li>
+          <li><a href="planner.html">Assignment Planner</a></li>
+          <li><a href="gpa.html">GPA Calculator</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>Resources</h4>
+        <ul class="footer-links">
+          <li><a href="https://www.byui.edu" target="_blank" rel="noopener">BYU-Idaho</a></li>
+          <li><a href="https://www.byui.edu/academics" target="_blank" rel="noopener">Academic Calendar</a></li>
+          <li><a href="https://www.byui.edu/tutoring" target="_blank" rel="noopener">Tutoring Center</a></li>
+        </ul>
+      </div>
+
+    </div>
+    <div class="footer-bottom">
+      <p class="footer-copyright">
+        &copy; <span id="footer-year"></span> <strong>Elysian Lin</strong> · WDD 231
+      </p>
+      <div class="footer-meta">
+        <span class="semester-tag">✦ Spring 2025</span>
+        <span>BYU-Idaho</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ===== TIMER COMPLETE MODAL ===== -->
+  <div class="modal-overlay celebration-modal" id="timer-modal" role="dialog" aria-modal="true" aria-labelledby="timer-modal-title">
+    <div class="modal" style="max-width:380px; text-align:center">
+      <div class="celebration-icon" id="timer-modal-icon">🎉</div>
+      <h2 class="modal-title" id="timer-modal-title">Session Complete!</h2>
+      <p style="margin: var(--sp-3) 0 var(--sp-6); color:var(--clr-text-muted)" id="timer-modal-msg"></p>
+      <button class="btn btn-primary" id="timer-modal-close" style="width:100%">Got it!</button>
+    </div>
+  </div>
+
+  <!-- Toast container -->
+  <div id="toast-container" role="status" aria-live="polite"></div>
+
+  <!-- Script (module so it can use import) -->
+  <script type="module" src="js/main.js"></script>
+  <script type="module">
+    // Inline supplementary dashboard logic
+    import { getAssignments } from './js/storage.js';
+    import { formatDate, daysUntil, dueDateClass } from './js/utils.js';
+    import { getGPACourses } from './js/storage.js';
+    import { calculateGPA } from './js/utils.js';
+
+    // Greeting
+    const greetEl = document.getElementById('greeting');
+    if (greetEl) {
+      const h = new Date().getHours();
+      const g = h < 12 ? 'Good morning' : h < 17 ? 'Good afternoon' : 'Good evening';
+      const days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+      greetEl.textContent = `${g} — ${days[new Date().getDay()]}, ${new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'})}`;
+    }
+
+    // Footer year
+    const fy = document.getElementById('footer-year');
+    if (fy) fy.textContent = new Date().getFullYear();
+
+    // Recent assignments widget
+    const container = document.getElementById('recent-assignments');
+    const all = getAssignments()
+      .filter(a => a.status !== 'done')
+      .sort((a,b) => (a.dueDate||'9999') < (b.dueDate||'9999') ? -1 : 1)
+      .slice(0, 5);
+
+    if (container && all.length > 0) {
+      container.innerHTML = all.map(a => {
+        const dc = dueDateClass(a.dueDate);
+        const days = daysUntil(a.dueDate);
+        const daysStr = days < 0 ? `${Math.abs(days)}d overdue` : days === 0 ? 'Today!' : `${days}d`;
+        return `
+          <div style="display:flex; align-items:center; gap:var(--sp-4); padding:var(--sp-3) 0; border-bottom:1px solid var(--clr-border)">
+            <div style="flex:1">
+              <div style="font-weight:600; font-size:var(--fs-sm)">${a.taskName}</div>
+              <div style="font-size:var(--fs-xs); color:var(--clr-text-muted)">${a.courseName}</div>
+            </div>
+            <div style="text-align:right">
+              <div class="due-date ${dc}" style="font-size:var(--fs-xs)">${daysStr}</div>
+              <span class="badge badge-${a.priority}" style="margin-top:2px">${a.priority}</span>
+            </div>
+          </div>`;
+      }).join('');
+    }
+
+    // Header GPA
+    const gpaCourses = getGPACourses();
+    const gpa = calculateGPA(gpaCourses);
+    const headerGpa = document.getElementById('header-gpa');
+    if (headerGpa && gpaCourses.length > 0) headerGpa.textContent = gpa.toFixed(2);
+  </script>
+
+</body>
+</html>
