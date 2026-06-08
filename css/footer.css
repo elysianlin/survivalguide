@@ -1,0 +1,177 @@
+/* ============================================
+   footer.css
+   Site footer styles
+   ============================================ */
+
+.site-footer {
+  background: var(--clr-surface);
+  border-top: 1px solid var(--clr-border);
+  margin-top: auto;
+}
+
+/* --- Main Footer Grid --- */
+.footer-inner {
+  max-width: var(--max-width);
+  margin-inline: auto;
+  padding: var(--sp-10) var(--sp-8) var(--sp-8);
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  gap: var(--sp-10);
+}
+
+/* Branding column */
+.footer-brand {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-4);
+}
+.footer-brand .logo-text {
+  font-family: var(--font-display);
+  font-weight: var(--fw-extrabold);
+  font-size: var(--fs-xl);
+  color: var(--clr-text);
+  letter-spacing: -0.02em;
+}
+.footer-brand .logo-text span { color: var(--clr-primary); }
+.footer-tagline {
+  font-size: var(--fs-sm);
+  color: var(--clr-text-muted);
+  line-height: var(--lh-loose);
+  max-width: 28ch;
+}
+
+/* Newsletter subscription form in footer */
+.footer-subscribe {
+  display: flex;
+  gap: var(--sp-2);
+  margin-top: var(--sp-2);
+}
+.footer-subscribe input {
+  flex: 1;
+  padding: var(--sp-2) var(--sp-3);
+  font-size: var(--fs-sm);
+  border-radius: var(--radius-md);
+  background: var(--clr-surface-2);
+}
+.footer-subscribe .btn {
+  flex-shrink: 0;
+  padding-inline: var(--sp-4);
+  font-size: var(--fs-sm);
+}
+.subscribe-message {
+  font-size: var(--fs-xs);
+  color: var(--clr-success);
+  min-height: 1em;
+}
+
+/* Link columns */
+.footer-col h4 {
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-semibold);
+  color: var(--clr-text);
+  margin-bottom: var(--sp-4);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  font-family: var(--font-body);
+}
+.footer-links {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+}
+.footer-links a {
+  font-size: var(--fs-sm);
+  color: var(--clr-text-muted);
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  transition: color var(--transition-fast), gap var(--transition-fast);
+}
+.footer-links a:hover {
+  color: var(--clr-primary);
+  gap: var(--sp-3);
+  text-decoration: none;
+}
+.footer-links a::before {
+  content: '→';
+  font-size: 0.7em;
+  opacity: 0;
+  transition: opacity var(--transition-fast);
+}
+.footer-links a:hover::before {
+  opacity: 1;
+}
+
+/* --- Bottom bar --- */
+.footer-bottom {
+  border-top: 1px solid var(--clr-border);
+  padding: var(--sp-5) var(--sp-8);
+  max-width: var(--max-width);
+  margin-inline: auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-4);
+}
+.footer-copyright {
+  font-size: var(--fs-xs);
+  color: var(--clr-text-muted);
+}
+.footer-copyright strong {
+  color: var(--clr-text);
+}
+.footer-meta {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-4);
+  font-size: var(--fs-xs);
+  color: var(--clr-text-muted);
+}
+.footer-meta a {
+  color: var(--clr-text-muted);
+  text-decoration: none;
+}
+.footer-meta a:hover {
+  color: var(--clr-primary);
+  text-decoration: none;
+}
+
+/* semester tag */
+.semester-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-1);
+  background: rgba(37, 99, 235, 0.1);
+  color: var(--clr-primary);
+  border-radius: var(--radius-full);
+  padding: 2px var(--sp-3);
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-semibold);
+}
+
+/* --- Responsive --- */
+@media (max-width: 900px) {
+  .footer-inner {
+    grid-template-columns: 1fr 1fr;
+    gap: var(--sp-8);
+  }
+  .footer-brand {
+    grid-column: 1 / -1;
+  }
+  .footer-subscribe { max-width: 360px; }
+}
+
+@media (max-width: 600px) {
+  .footer-inner {
+    grid-template-columns: 1fr;
+    padding: var(--sp-8) var(--sp-4);
+    gap: var(--sp-6);
+  }
+  .footer-bottom {
+    flex-direction: column;
+    text-align: center;
+    padding-inline: var(--sp-4);
+    gap: var(--sp-2);
+  }
+}

@@ -1,0 +1,107 @@
+/* ============================================
+   variables.css
+   Single source of truth for all design tokens
+   ============================================ */
+:root {
+  /* --- Brand Colors --- */
+  --clr-primary:       #134074;   /* navy blue */
+  --clr-primary-dark:  #0B2545;   /* deep navy */
+  --clr-primary-mid:   #13315C;   /* dark navy */
+  --clr-primary-light: #8DA9C4;   /* steel blue */
+  --clr-accent:        #8DA9C4;   /* steel blue — secondary accent */
+  --clr-accent-dark:   #134074;
+  --clr-danger:        #ef4444;
+  --clr-danger-light:  #fca5a5;
+  --clr-success:       #22c55e;
+  --clr-success-light: #bbf7d0;
+  --clr-warning:       #f97316;
+
+  /* --- Neutrals (Light Mode) --- */
+  --clr-bg:            #EEF4ED;   /* off-white green tint */
+  --clr-surface:       #ffffff;
+  --clr-surface-2:     #f4f8f7;
+  --clr-border:        #8DA9C4;   /* steel blue border */
+  --clr-text:          #0B2545;   /* deep navy text */
+  --clr-text-muted:    #13315C;
+  --clr-text-inverse:  #EEF4ED;
+
+  /* --- Priority Colors --- */
+  --clr-high:   #ef4444;
+  --clr-medium: #f97316;
+  --clr-low:    #22c55e;
+
+  /* --- Typography --- */
+  --font-display: "Archivo Black", sans-serif;
+  --font-body:    'DM Sans', sans-serif;
+  --font-mono:    'JetBrains Mono', monospace;
+  --fs-xs:   0.75rem;
+  --fs-sm:   0.875rem;
+  --fs-base: 1rem;
+  --fs-md:   1.125rem;
+  --fs-lg:   1.25rem;
+  --fs-xl:   1.5rem;
+  --fs-2xl:  1.875rem;
+  --fs-3xl:  2.25rem;
+  --fs-4xl:  3rem;
+  --fw-normal:    400;
+  --fw-medium:    500;
+  --fw-semibold:  600;
+  --fw-bold:      700;
+  --fw-extrabold: 800;
+  --lh-tight:  1.2;
+  --lh-normal: 1.5;
+  --lh-loose:  1.75;
+
+  /* --- Spacing Scale --- */
+  --sp-1:  0.25rem;
+  --sp-2:  0.5rem;
+  --sp-3:  0.75rem;
+  --sp-4:  1rem;
+  --sp-5:  1.25rem;
+  --sp-6:  1.5rem;
+  --sp-8:  2rem;
+  --sp-10: 2.5rem;
+  --sp-12: 3rem;
+  --sp-16: 4rem;
+  --sp-20: 5rem;
+  --sp-24: 6rem;
+
+  /* --- Border Radius --- */
+  --radius-sm:   4px;
+  --radius-md:   8px;
+  --radius-lg:   12px;
+  --radius-xl:   20px;
+  --radius-full: 9999px;
+
+  /* --- Shadows --- */
+  --shadow-sm:  0 1px 3px rgba(11, 37, 69, 0.10);
+  --shadow-md:  0 4px 16px rgba(11, 37, 69, 0.16);
+  --shadow-lg:  0 8px 32px rgba(11, 37, 69, 0.22);
+  --shadow-xl:  0 16px 48px rgba(11, 37, 69, 0.30);
+
+  /* --- Transitions --- */
+  --transition-fast:   150ms ease;
+  --transition-normal: 250ms ease;
+  --transition-slow:   400ms cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* --- Layout --- */
+  --max-width:       1280px;
+  --header-height:   68px;
+  --sidebar-width:   260px;
+}
+
+/* ============================================
+   Dark Mode Overrides
+   ============================================ */
+[data-theme="dark"] {
+  --clr-bg:         #0B2545;   /* deep navy bg */
+  --clr-surface:    #13315C;   /* dark navy surface */
+  --clr-surface-2:  #134074;   /* navy surface-2 */
+  --clr-border:     #8DA9C4;   /* steel blue border */
+  --clr-text:       #EEF4ED;   /* off-white text */
+  --clr-text-muted: #8DA9C4;   /* steel blue muted */
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.5);
+  --shadow-md: 0 4px 16px rgba(0,0,0,0.6);
+  --shadow-lg: 0 8px 32px rgba(0,0,0,0.7);
+  --shadow-xl: 0 16px 48px rgba(0,0,0,0.8);
+}

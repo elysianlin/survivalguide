@@ -1,0 +1,20 @@
+/* ============================================
+   main.css  —  Entry Point
+   Imports all partials in the correct order.
+   Link only THIS file in your HTML:
+     <link rel="stylesheet" href="css/main.css">
+   ============================================ */
+
+/* 1. Design tokens — must come first so variables
+      are available to every file that follows */
+@import url('./variables.css');
+
+/* 2. Global reset and base element styles */
+@import url('./global.css');
+
+/* 3. Site chrome */
+@import url('./header.css');
+@import url('./footer.css');
+
+/* 4. Page / feature-level styles */
+@import url('./pages.css');

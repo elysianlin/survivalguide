@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Assignment Planner — manage all your tasks, deadlines, and exams in one place.">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+  <title>Planner | Semester Survival Kit</title>
+  <link rel="stylesheet" href="css/main.css">
+</head>
+<body>
+
+  <!-- ===== HEADER (shared) ===== -->
+  <header class="site-header" role="banner">
+    <div class="header-inner">
+      <a href="index.html" class="site-logo" aria-label="Semester Survival Kit home">
+        <div class="logo-icon" aria-hidden="true">
+          <i class="ti ti-notebook"></i>
+        </div>
+        <span class="logo-text">Semester <span>Survival Kit</span></span>
+      </a>
+
+      <!-- Desktop Navigation -->
+      <nav class="site-nav" aria-label="Primary navigation">
+        <a href="index.html" class="nav-link">
+          <i class="ti ti-layout-dashboard nav-icon"></i> Dashboard
+        </a>
+        <a href="planner.html" class="nav-link">
+          <i class="ti ti-calendar-event nav-icon"></i> Planner
+        </a>
+        <a href="gpa.html" class="nav-link">
+          <i class="ti ti-report-analytics nav-icon"></i> GPA
+        </a>
+      </nav>
+
+      <div class="header-actions">
+        <button class="theme-toggle" id="theme-toggle" aria-label="Toggle dark mode">
+          <i class="ti ti-moon" id="theme-toggle-icon"></i>
+        </button>
+      </div>
+
+      <button class="hamburger" id="hamburger" aria-label="Open menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Mobile Nav Drawer -->
+  <nav class="mobile-nav" id="mobile-nav" aria-label="Mobile navigation">
+    <a href="index.html" class="nav-link">
+      <i class="ti ti-layout-dashboard nav-icon"></i> Dashboard
+    </a>
+    <a href="planner.html" class="nav-link">
+      <i class="ti ti-calendar-event nav-icon"></i> Planner
+    </a>
+    <a href="gpa.html" class="nav-link">
+      <i class="ti ti-report-analytics nav-icon"></i> GPA Calculator
+    </a>
+  </nav>
+  <!-- ===== MAIN ===== -->
+  <div class="page-wrapper">
+    <main class="main-content">
+
+      <!-- Stats strip -->
+      <div class="stats-grid fade-in-up" style="margin-bottom: var(--sp-6)">
+        <div class="stat-card" style="--card-accent:var(--clr-primary)">
+          <div class="stat-icon"><i class="ti ti-list-details"></i></div>
+          <div class="stat-value" id="stat-total">0</div>
+          <div class="stat-label">Total</div>
+        </div>
+        <div class="stat-card" style="--card-accent:var(--clr-success)">
+          <div class="stat-icon"><i class="ti ti-circle-check"></i></div>
+          <div class="stat-value" id="stat-done">0</div>
+          <div class="stat-label">Done</div>
+        </div>
+        <div class="stat-card" style="--card-accent:var(--clr-accent)">
+          <div class="stat-icon"><i class="ti ti-hourglass-high"></i></div>
+          <div class="stat-value" id="stat-pending">0</div>
+          <div class="stat-label">Pending</div>
+        </div>
+        <div class="stat-card" style="--card-accent:var(--clr-danger)">
+          <div class="stat-icon"><i class="ti ti-alert-triangle"></i></div>
+          <div class="stat-value" id="stat-overdue">0</div>
+          <div class="stat-label">Overdue</div>
+        </div>
+      </div>
+
+      <!-- Toolbar -->
+      <div class="planner-toolbar fade-in-up">
+        <h1 class="page-title">Assignment Planner</h1>
+        <button class="btn btn-primary" id="add-assignment-btn">+ Add Assignment</button>
+      </div>
+
+      <!-- Filter bar -->
+      <div class="filter-bar fade-in-up">
+        <label for="filter-course">Course:</label>
+        <select id="filter-course" aria-label="Filter by course">
+          <option value="all">All Courses</option>
+        </select>
+
+        <label for="filter-status">Status:</label>
+        <select id="filter-status" aria-label="Filter by status">
+          <option value="all">All</option>
+          <option value="pending">Pending</option>
+          <option value="in-progress">In Progress</option>
+          <option value="done">Done</option>
+        </select>
+
+        <label for="filter-priority">Priority:</label>
+        <select id="filter-priority" aria-label="Filter by priority">
+          <option value="all">All</option>
+          <option value="high">High</option>
+          <option value="medium">Medium</option>
+          <option value="low">Low</option>
+        </select>
+
+        <!-- Quick filter chips -->
+        <div class="filter-chips" role="group" aria-label="Quick filters">
+          <button class="filter-chip active" data-filter-type="status" data-value="all">All</button>
+          <button class="filter-chip" data-filter-type="status" data-value="pending">Pending</button>
+          <button class="filter-chip" data-filter-type="status" data-value="done">Done</button>
+        </div>
+      </div>
+
+      <!-- Assignment table -->
+      <div class="assignment-table-wrapper fade-in-up">
+        <table class="assignment-table" aria-label="Assignment list">
+          <thead>
+            <tr>
+              <th style="width:40px"><span class="sr-only">Complete</span></th>
+              <th data-sort="taskName">Task <span class="sort-icon">↕</span></th>
+              <th data-sort="courseName">Course <span class="sort-icon">↕</span></th>
+              <th data-sort="dueDate">Due Date <span class="sort-icon">↕</span></th>
+              <th data-sort="priority">Priority <span class="sort-icon">↕</span></th>
+              <th data-sort="status">Status <span class="sort-icon">↕</span></th>
+              <th><span class="sr-only">Actions</span></th>
+            </tr>
+          </thead>
+          <tbody id="assignment-tbody">
+            <!-- Rows rendered by planner.js -->
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Exam Section -->
+      <section id="exams" style="margin-top: var(--sp-10)" class="fade-in-up">
+        <h2 style="font-size:var(--fs-xl); margin-bottom:var(--sp-4); display: inline-flex; align-items: center; gap: var(--sp-2)">
+          <i class="ti ti-calendar-due" style="color: var(--clr-primary)"></i> Exam Countdown
+        </h2>
+        <div style="display:grid; grid-template-columns:1fr 320px; gap:var(--sp-6); align-items:start">
+
+          <!-- Existing exams -->
+          <div class="card">
+            <div id="exam-list">
+              <p class="text-muted text-sm">No exams added yet.</p>
+            </div>
+          </div>
+
+          <!-- Add exam form -->
+          <div class="card">
+            <h3 style="font-size:var(--fs-md); margin-bottom:var(--sp-4)">Add Exam</h3>
+            <form id="exam-form" novalidate>
+              <div class="form-group" style="margin-bottom:var(--sp-3)">
+                <label for="exam-name">Exam Name</label>
+                <input type="text" id="exam-name" placeholder="Final Exam" required>
+              </div>
+              <div class="form-group" style="margin-bottom:var(--sp-3)">
+                <label for="exam-course">Course</label>
+                <input type="text" id="exam-course" placeholder="WDD 231" list="course-datalist">
+              </div>
+              <div class="form-group" style="margin-bottom:var(--sp-5)">
+                <label for="exam-date">Exam Date</label>
+                <input type="date" id="exam-date" required>
+              </div>
+              <button type="submit" class="btn btn-primary" style="width:100%">Add Exam</button>
+            </form>
+          </div>
+
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- ===== FOOTER ===== -->
+  <footer class="site-footer">
+    <div class="footer-bottom" style="max-width:var(--max-width); margin-inline:auto; padding:var(--sp-5) var(--sp-8)">
+      <p class="footer-copyright">&copy; <span id="footer-year"></span>WDD 231</p>
+      <span class="semester-tag">✦ Spring 2025</span>
+    </div>
+  </footer>
+
+  <!-- ===== ADD/EDIT ASSIGNMENT MODAL ===== -->
+  <div class="modal-overlay" id="assignment-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 class="modal-title" id="modal-title">New Assignment</h2>
+        <button class="modal-close" id="modal-close-btn" aria-label="Close modal">✕</button>
+      </div>
+
+      <form id="assignment-form" novalidate>
+        <div class="modal-form">
+          <!-- Course -->
+          <div class="form-group">
+            <label for="f-course">Course Code <span aria-hidden="true" style="color:var(--clr-danger)">*</span></label>
+            <input type="text" id="f-course" placeholder="e.g. WDD 231"
+              list="course-datalist" required autocomplete="off">
+            <datalist id="course-datalist"></datalist>
+            <span class="form-error" id="err-courseName" aria-live="polite"></span>
+          </div>
+
+          <!-- Task name -->
+          <div class="form-group">
+            <label for="f-task">Assignment Name <span aria-hidden="true" style="color:var(--clr-danger)">*</span></label>
+            <input type="text" id="f-task" placeholder="e.g. Week 5 Project" required>
+            <span class="form-error" id="err-taskName" aria-live="polite"></span>
+          </div>
+
+          <!-- Due date -->
+          <div class="form-group">
+            <label for="f-date">Due Date <span aria-hidden="true" style="color:var(--clr-danger)">*</span></label>
+            <input type="date" id="f-date" required>
+            <span class="form-error" id="err-dueDate" aria-live="polite"></span>
+          </div>
+
+          <!-- Priority -->
+          <div class="form-group">
+            <label for="f-priority">Priority <span aria-hidden="true" style="color:var(--clr-danger)">*</span></label>
+            <select id="f-priority" required>
+              <option value="">Select priority…</option>
+              <option value="high">🔴 High</option>
+              <option value="medium">🟡 Medium</option>
+              <option value="low">🟢 Low</option>
+            </select>
+            <span class="form-error" id="err-priority" aria-live="polite"></span>
+          </div>
+
+          <div class="form-group full">
+            <label for="f-status">Status <span aria-hidden="true" style="color:var(--clr-danger)">*</span></label>
+            <select id="f-status" required>
+              <option value="">Select status…</option>
+              <option value="pending">○ Pending</option>
+              <option value="in-progress">→ In Progress</option>
+              <option value="done">✓ Done</option>
+            </select>
+            <span class="form-error" id="err-status" aria-live="polite"></span>
+          </div>
+        </div>
+
+        <div class="modal-actions">
+          <button type="button" class="btn btn-secondary" id="modal-cancel-btn">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save Assignment</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div id="toast-container" role="status" aria-live="polite"></div>
+
+  <script type="module" src="js/planner.js"></script>
+  <script type="module">
+    // Theme toggle + nav active (shared snippet)
+    import { getTheme, saveTheme } from './js/storage.js';
+    const applyTheme = t => {
+      document.documentElement.setAttribute('data-theme', t);
+      const iconEl = document.getElementById('theme-toggle-icon');
+      
+      if (iconEl) {
+        // Dynamically update the class names for your vector icon
+        if (t === 'dark') {
+          iconEl.className = 'ti ti-sun';
+        } else {
+          iconEl.className = 'ti ti-moon';
+        }
+      }
+    };
+    applyTheme(getTheme());
+    document.getElementById('theme-toggle')?.addEventListener('click', () => {
+      const n = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+      applyTheme(n); saveTheme(n);
+    });
+    // hamburger
+    document.getElementById('hamburger')?.addEventListener('click', () => {
+      document.getElementById('hamburger').classList.toggle('open');
+      document.getElementById('mobile-nav').classList.toggle('open');
+    });
+    // active nav
+    document.querySelectorAll('.nav-link').forEach(l => {
+      if (l.getAttribute('href') === 'planner.html') l.classList.add('active');
+    });
+    // footer year
+    const fy = document.getElementById('footer-year');
+    if (fy) fy.textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>

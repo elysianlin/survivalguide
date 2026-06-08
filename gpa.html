@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="GPA Calculator — compute your semester GPA from course grades and credits.">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+  <title>GPA Calculator | Semester Survival Kit</title>
+  <link rel="stylesheet" href="../css/main.css">
+</head>
+<body>
+
+  <!-- ===== HEADER ===== -->
+<header class="site-header" role="banner">
+    <div class="header-inner">
+      <a href="../index.html" class="site-logo" aria-label="Semester Survival Kit home">
+        <div class="logo-icon" aria-hidden="true">
+          <i class="ti ti-notebook"></i>
+        </div>
+        <span class="logo-text">Semester <span>Survival Kit</span></span>
+      </a>
+
+      <nav class="site-nav" aria-label="Primary navigation">
+        <a href="../index.html" class="nav-link">
+          <i class="ti ti-layout-dashboard nav-icon"></i> Dashboard
+        </a>
+        <a href="../planner.html" class="nav-link">
+          <i class="ti ti-calendar-event nav-icon"></i> Planner
+        </a>
+        <a href="gpa.html" class="nav-link">
+          <i class="ti ti-report-analytics nav-icon"></i> GPA
+        </a>
+      </nav>
+
+      <div class="header-actions">
+        <button class="theme-toggle" id="theme-toggle" aria-label="Toggle dark mode">
+          <i class="ti ti-moon" id="theme-toggle-icon"></i>
+        </button>
+      </div>
+
+      <button class="hamburger" id="hamburger" aria-label="Open menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+
+  <nav class="mobile-nav" id="mobile-nav" aria-label="Mobile navigation">
+    <a href="../index.html" class="nav-link">
+      <i class="ti ti-layout-dashboard nav-icon"></i> Dashboard
+    </a>
+    <a href="../planner.html" class="nav-link">
+      <i class="ti ti-calendar-event nav-icon"></i> Planner
+    </a>
+    <a href="gpa.html" class="nav-link">
+      <i class="ti ti-report-analytics nav-icon"></i> GPA Calculator
+    </a>
+  </nav>
+
+  <!-- ===== MAIN ===== -->
+  <div class="page-wrapper">
+    <main class="main-content">
+
+      <div style="margin-bottom:var(--sp-8)">
+        <h1 style="font-size:var(--fs-3xl); margin-bottom:var(--sp-2)">GPA Calculator</h1>
+        <p class="text-muted">Enter your courses, credits, and projected grades to estimate your semester GPA.</p>
+      </div>
+
+      <div class="gpa-layout fade-in-up">
+
+        <!-- Left: Add course form + table -->
+        <div>
+          <!-- Add course form -->
+          <div class="card" style="margin-bottom:var(--sp-6)">
+            <h2 style="font-size:var(--fs-lg); margin-bottom:var(--sp-5)">Add a Course</h2>
+            <form id="add-course-form" novalidate>
+              <div style="display:grid; grid-template-columns:1fr auto auto auto; gap:var(--sp-3); align-items:end">
+
+                <div class="form-group">
+                  <label for="new-course-name">Course</label>
+                  <input type="text" id="new-course-name" placeholder="e.g. WDD 231"
+                    list="gpa-course-datalist" required>
+                  <datalist id="gpa-course-datalist"></datalist>
+                </div>
+
+                <div class="form-group" style="min-width:90px">
+                  <label for="new-course-credits">Credits</label>
+                  <input type="number" id="new-course-credits"
+                    min="1" max="5" step="1" value="3" required style="max-width:90px">
+                </div>
+
+                <div class="form-group" style="min-width:110px">
+                  <label for="new-course-grade">Grade</label>
+                  <select id="new-course-grade" required>
+                    <option value="">Grade…</option>
+                    <option value="A+">A+</option><option value="A">A</option><option value="A-">A-</option>
+                    <option value="B+">B+</option><option value="B">B</option><option value="B-">B-</option>
+                    <option value="C+">C+</option><option value="C">C</option><option value="C-">C-</option>
+                    <option value="D+">D+</option><option value="D">D</option><option value="D-">D-</option>
+                    <option value="F">F</option>
+                  </select>
+                </div>
+
+                <button type="submit" class="btn btn-primary" style="margin-bottom:calc(var(--fs-xs) + var(--sp-2) + 4px)">+ Add</button>
+              </div>
+              <p class="form-error" id="add-course-error" aria-live="polite"></p>
+            </form>
+          </div>
+
+          <!-- Courses table -->
+          <div class="gpa-courses-table card" style="padding:0">
+            <div style="display:flex; align-items:center; justify-content:space-between; padding:var(--sp-4) var(--sp-5); border-bottom:1px solid var(--clr-border)">
+              <h2 style="font-size:var(--fs-md)">Your Courses</h2>
+              <button class="btn btn-ghost btn-sm" id="clear-gpa-btn" style="color:var(--clr-danger)">Clear All</button>
+            </div>
+            <div style="overflow-x:auto">
+              <table aria-label="GPA courses">
+                <thead>
+                  <tr>
+                    <th>Course</th>
+                    <th>Credits</th>
+                    <th>Grade</th>
+                    <th>Grade Points</th>
+                    <th><span class="sr-only">Remove</span></th>
+                  </tr>
+                </thead>
+                <tbody id="gpa-tbody">
+                  <!-- Rendered by gpa.js -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Grade scale reference -->
+          <details class="card" style="margin-top:var(--sp-4); cursor:pointer">
+            <summary style="font-weight:var(--fw-semibold); font-size:var(--fs-sm); list-style:none; display:flex; align-items:center; gap:var(--sp-2)">
+              <span>📖</span> Grade Scale Reference
+            </summary>
+            <div style="display:grid; grid-template-columns:repeat(auto-fill,minmax(120px,1fr)); gap:var(--sp-2); margin-top:var(--sp-4)">
+              ${[
+                ['A+ / A','4.0'],['A-','3.7'],['B+','3.3'],['B','3.0'],
+                ['B-','2.7'],['C+','2.3'],['C','2.0'],['C-','1.7'],
+                ['D+','1.3'],['D','1.0'],['D-','0.7'],['F','0.0'],
+              ].map(([g,p]) => `
+                <div style="display:flex;justify-content:space-between;padding:var(--sp-2) var(--sp-3);background:var(--clr-surface-2);border-radius:var(--radius-md);font-size:var(--fs-xs)">
+                  <span style="font-weight:600">${g}</span>
+                  <span class="text-muted">${p}</span>
+                </div>`).join('')}
+            </div>
+          </details>
+        </div>
+
+        <!-- Right: GPA result card -->
+        <div id="gpa-result-card" class="gpa-result-card">
+          <div class="gpa-result-label" style="opacity:0.75; margin-bottom:var(--sp-3)">Semester GPA</div>
+          <div class="gpa-result-value" id="gpa-value">—</div>
+          <div class="gpa-result-letter" id="gpa-letter"></div>
+          <div style="margin-top:var(--sp-4); padding-top:var(--sp-4); border-top:1px solid rgba(255,255,255,0.2)">
+            <div style="font-size:var(--fs-sm); opacity:0.75; margin-bottom:var(--sp-1)" id="gpa-credits"></div>
+            <div style="font-size:var(--fs-sm); font-weight:600" id="gpa-standing"></div>
+          </div>
+          <div id="gpa-chart"></div>
+        </div>
+
+      </div><!-- /gpa-layout -->
+
+    </main>
+  </div>
+
+  <!-- ===== FOOTER ===== -->
+  <footer class="site-footer">
+    <div class="footer-bottom" style="max-width:var(--max-width); margin-inline:auto; padding:var(--sp-5) var(--sp-8)">
+      <p class="footer-copyright">&copy; <span id="footer-year"></span>WDD 231</p>
+      <span class="semester-tag">✦ Spring 2025</span>
+    </div>
+  </footer>
+
+  <div id="toast-container" role="status" aria-live="polite"></div>
+
+  <script type="module" src="../js/gpa.js"></script>
+  <script type="module">
+    import { getTheme, saveTheme } from '../js/storage.js';
+    const applyTheme = t => {
+      document.documentElement.setAttribute('data-theme', t);
+      const iconEl = document.getElementById('theme-toggle-icon');
+      
+      if (iconEl) {
+        // Dynamically update the class names for your vector icon
+        if (t === 'dark') {
+          iconEl.className = 'ti ti-sun';
+        } else {
+          iconEl.className = 'ti ti-moon';
+        }
+      }
+    };
+    applyTheme(getTheme());
+    document.getElementById('theme-toggle')?.addEventListener('click', () => {
+      const n = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+      applyTheme(n); saveTheme(n);
+    });
+    document.getElementById('hamburger')?.addEventListener('click', () => {
+      document.getElementById('hamburger').classList.toggle('open');
+      document.getElementById('mobile-nav').classList.toggle('open');
+    });
+    document.querySelectorAll('.nav-link').forEach(l => {
+      if (l.getAttribute('href') === 'gpa.html') l.classList.add('active');
+    });
+    const fy = document.getElementById('footer-year');
+    if (fy) fy.textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>
