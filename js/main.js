@@ -81,11 +81,53 @@ function initActiveNav() {
 }
 
 // ================================================================
-// DAILY QUOTE
+// DAILY QUOTE AND COURSES (JSON FETCH)
 // ================================================================
+async function initDashboardData() {
+  try {
+    // Fetch both JSON files simultaneously
+    const [quotesResponse, coursesResponse] = await Promise.all([
+      fetch('js/quotes.json'),
+      fetch('js/courses.json')
+    ]);
 
+    // Parse the JSON data
+    const quotes = await quotesResponse.json();
+    const courses = await coursesResponse.json();
 
+    // 1. Populate a Random Quote
+    const quoteTextEl = document.getElementById('quote-text');
+    const quoteAuthorEl = document.getElementById('quote-author');
+    
+    // Only try to update the DOM if the elements exist on the current page
+    if (quoteTextEl && quoteAuthorEl && quotes.length > 0) {
+      const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
+      quoteTextEl.textContent = `"${randomQuote.text}"`;
+      quoteAuthorEl.textContent = `— ${randomQuote.author}`;
+    }
 
+    // 2. Populate the Courses into the Countdown List
+    const countdownList = document.getElementById('countdown-list');
+    
+    // Append the courses to existing items
+    if (countdownList && courses.length > 0) {
+      const coursesHTML = courses.map(course => `
+        <div style="display:flex; justify-content:space-between; padding:var(--sp-2) 0; border-bottom:1px solid var(--clr-border)">
+          <div>
+            <strong>${course.code}</strong>
+            <div style="font-size:var(--fs-xs); color:var(--clr-text-muted)">${course.name}</div>
+          </div>
+          <span class="badge badge-medium">${course.credits} Cr</span>
+        </div>
+      `).join('');
+      
+      countdownList.innerHTML += coursesHTML;
+    }
+
+  } catch (error) {
+    console.error("Error loading JSON data:", error);
+  }
+}
 
 // ================================================================
 // EXAM COUNTDOWN
@@ -94,7 +136,7 @@ function initCountdowns() {
   const container = document.getElementById('countdown-list');
   if (!container) return;
 
-function render() {
+  function render() {
     const exams = getExams();
     if (exams.length === 0) {
       container.innerHTML = `
@@ -186,7 +228,7 @@ function initPomodoro() {
     const offset = CIRCUMFERENCE * (1 - remaining / total);
     if (progressEl) {
       progressEl.style.strokeDashoffset = offset;
-      progressEl.className = `pomodoro-progress${isBreak ? ' break' : ''}`;
+      progressEl.setAttribute('class', `pomodoro-progress${isBreak ? ' break' : ''}`);
     }
     
     // Dynamically inject vector icon classes alongside text states
@@ -318,7 +360,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initHeaderScroll();
   initMobileNav();
   initActiveNav();
-  initQuote();
+  initDashboardData();
   initCountdowns();
   initStats();
   initPomodoro();
