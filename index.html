@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Semester Survival Kit — Your academic command center for BYU-Idaho students.">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
   <title>Dashboard | Semester Survival Kit</title>
 
   <!--
@@ -24,14 +25,22 @@
     <div class="header-inner">
 
       <a href="index.html" class="site-logo" aria-label="Semester Survival Kit home">
-        <div class="logo-icon" aria-hidden="true">📚</div>
+        <div class="logo-icon" aria-hidden="true">
+          <i class="ti ti-notebook"></i>
+        </div>
         <span class="logo-text">Semester <span>Survival Kit</span></span>
       </a>
 
       <nav class="site-nav" aria-label="Primary navigation">
-        <a href="index.html"   class="nav-link"><span class="nav-icon">🏠</span> Dashboard</a>
-        <a href="planner.html" class="nav-link"><span class="nav-icon">📝</span> Planner</a>
-        <a href="gpa.html"     class="nav-link"><span class="nav-icon">📊</span> GPA</a>
+        <a href="index.html" class="nav-link">
+          <i class="ti ti-layout-dashboard nav-icon"></i> Dashboard
+        </a>
+        <a href="planner.html" class="nav-link">
+          <i class="ti ti-calendar-event nav-icon"></i> Planner
+        </a>
+        <a href="gpa.html" class="nav-link">
+          <i class="ti ti-report-analytics nav-icon"></i> GPA
+        </a>
       </nav>
 
       <div class="header-actions">
@@ -39,7 +48,9 @@
           <span>GPA</span>
           <span class="gpa-value" id="header-gpa">—</span>
         </div>
-        <button class="theme-toggle" id="theme-toggle" aria-label="Toggle dark mode">🌙</button>
+        <button class="theme-toggle" id="theme-toggle" aria-label="Toggle dark mode">
+          <i class="ti ti-moon" id="theme-toggle-icon"></i>
+        </button>
       </div>
 
       <!-- Mobile hamburger -->
@@ -51,9 +62,15 @@
 
   <!-- Mobile nav drawer -->
   <nav class="mobile-nav" id="mobile-nav" aria-label="Mobile navigation">
-    <a href="index.html"   class="nav-link"><span class="nav-icon">🏠</span> Dashboard</a>
-    <a href="planner.html" class="nav-link"><span class="nav-icon">📝</span> Planner</a>
-    <a href="gpa.html"     class="nav-link"><span class="nav-icon">📊</span> GPA Calculator</a>
+    <a href="index.html" class="nav-link">
+          <i class="ti ti-layout-dashboard nav-icon"></i> Dashboard
+    </a>
+    <a href="planner.html" class="nav-link">
+          <i class="ti ti-calendar-event nav-icon"></i> Planner
+    </a>
+    <a href="gpa.html" class="nav-link">
+          <i class="ti ti-report-analytics nav-icon"></i> GPA
+    </a>
   </nav>
 
   <!-- ===== MAIN ===== -->
@@ -72,24 +89,24 @@
       </div>
 
       <!-- Stats row -->
-      <div class="stats-grid fade-in-up">
-        <div class="stat-card" style="--card-accent: var(--clr-primary)">
-          <div class="stat-icon">📋</div>
+      <div class="stats-grid fade-in-up" style="margin-bottom: var(--sp-6)">
+        <div class="stat-card" style="--card-accent:var(--clr-primary)">
+          <div class="stat-icon"><i class="ti ti-list-details"></i></div>
           <div class="stat-value" id="stat-total">0</div>
-          <div class="stat-label">Total Tasks</div>
+          <div class="stat-label">Total</div>
         </div>
-        <div class="stat-card" style="--card-accent: var(--clr-success)">
-          <div class="stat-icon">✅</div>
+        <div class="stat-card" style="--card-accent:var(--clr-success)">
+          <div class="stat-icon"><i class="ti ti-circle-check"></i></div>
           <div class="stat-value" id="stat-done">0</div>
-          <div class="stat-label">Completed</div>
+          <div class="stat-label">Done</div>
         </div>
-        <div class="stat-card" style="--card-accent: var(--clr-accent)">
-          <div class="stat-icon">⏳</div>
+        <div class="stat-card" style="--card-accent:var(--clr-accent)">
+          <div class="stat-icon"><i class="ti ti-hourglass-high"></i></div>
           <div class="stat-value" id="stat-pending">0</div>
           <div class="stat-label">Pending</div>
         </div>
-        <div class="stat-card" style="--card-accent: var(--clr-danger)">
-          <div class="stat-icon">🔥</div>
+        <div class="stat-card" style="--card-accent:var(--clr-danger)">
+          <div class="stat-icon"><i class="ti ti-alert-triangle"></i></div>
           <div class="stat-value" id="stat-overdue">0</div>
           <div class="stat-label">Overdue</div>
         </div>
@@ -118,7 +135,7 @@
             </div>
             <div id="recent-assignments">
               <div class="empty-state">
-                <div class="empty-icon">📝</div>
+                <div class="empty-icon"><i class="ti ti-notebook"></i></div>
                 <p>No assignments yet. <a href="planner.html">Add one →</a></p>
               </div>
             </div>
@@ -150,7 +167,7 @@
               </svg>
               <div class="pomodoro-time-text">
                 <div class="pomodoro-time" id="pomodoro-time" aria-live="polite">25:00</div>
-                <div class="pomodoro-mode-label" id="pomodoro-mode">📚 Study</div>
+                <div class="pomodoro-mode-label" id="pomodoro-mode"><i class="ti ti-book"></i></div>
               </div>
             </div>
 
@@ -206,7 +223,7 @@
     </div>
     <div class="footer-bottom">
       <p class="footer-copyright">
-        &copy; <span id="footer-year"></span> <strong>Elysian Lin</strong> · WDD 231
+        &copy; <span id="footer-year"></span> <strong>Semester Survival Kit</strong> · WDD 231
       </p>
       <div class="footer-meta">
         <span class="semester-tag">✦ Spring 2025</span>
