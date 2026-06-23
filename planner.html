@@ -34,6 +34,10 @@
       </nav>
 
       <div class="header-actions">
+        <div class="gpa-pill" aria-label="Current GPA">
+          <span>GPA</span>
+          <span class="gpa-value" id="header-gpa">—</span>
+        </div>
         <button class="theme-toggle" id="theme-toggle" aria-label="Toggle dark mode">
           <i class="ti ti-moon" id="theme-toggle-icon"></i>
         </button>
@@ -183,10 +187,49 @@
   </div>
 
   <!-- ===== FOOTER ===== -->
-  <footer class="site-footer">
-    <div class="footer-bottom" style="max-width:var(--max-width); margin-inline:auto; padding:var(--sp-5) var(--sp-8)">
-      <p class="footer-copyright">&copy; <span id="footer-year"></span>WDD 231</p>
-      <span class="semester-tag">✦ Spring 2025</span>
+<footer class="site-footer" role="contentinfo">
+    <div class="footer-inner">
+
+      <div class="footer-brand">
+        <div class="logo-text">Semester <span>Survival Kit</span></div>
+        <p class="footer-tagline">Your academic command center — built for BYU-Idaho students who refuse to fall behind.</p>
+        <div>
+          <p class="text-xs text-muted" style="margin-bottom: var(--sp-2)">Get weekly study tips:</p>
+          <form class="footer-subscribe" id="newsletter-form" novalidate>
+            <input type="email" placeholder="your@email.com" aria-label="Email address for newsletter">
+            <button type="submit" class="btn btn-primary btn-sm">Subscribe</button>
+          </form>
+          <p class="subscribe-message" id="subscribe-msg" aria-live="polite"></p>
+        </div>
+      </div>
+
+      <div class="footer-col">
+        <h4>Pages</h4>
+        <ul class="footer-links">
+          <li><a href="index.html">Dashboard</a></li>
+          <li><a href="planner.html">Assignment Planner</a></li>
+          <li><a href="gpa.html">GPA Calculator</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>Resources</h4>
+        <ul class="footer-links">
+          <li><a href="https://www.byui.edu" target="_blank" rel="noopener">BYU-Idaho</a></li>
+          <li><a href="https://www.byui.edu/academics" target="_blank" rel="noopener">Academic Calendar</a></li>
+          <li><a href="https://www.byui.edu/tutoring" target="_blank" rel="noopener">Tutoring Center</a></li>
+        </ul>
+      </div>
+
+    </div>
+    <div class="footer-bottom">
+      <p class="footer-copyright">
+        &copy; <span id="footer-year"></span> <strong>Semester Survival Kit</strong> · WDD 231
+      </p>
+      <div class="footer-meta">
+        <span class="semester-tag">✦ Spring 2025</span>
+        <span>BYU-Idaho</span>
+      </div>
     </div>
   </footer>
 
