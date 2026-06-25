@@ -25,9 +25,9 @@
 
   /* --- Neutrals (Light Mode) --- */
   --clr-bg:            #FFFFFF;   /* very light slate */
-  --clr-surface:       #FFFFFF;
-  --clr-surface-2:     #F9F5F0;
-  --clr-border:        #FFFFFF;
+  --clr-surface:       #ffffff;
+  --clr-surface-2:     #FFFFFF;
+  --clr-border:        #204D91;
 
   --clr-text:          #0F172A;   /* high contrast dark text */
   --clr-text-muted:    #64748B;   /* readable muted text */
