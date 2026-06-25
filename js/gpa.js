@@ -130,17 +130,24 @@ function updateGPADisplay() {
 
   // Color the result card
   const card = document.getElementById('gpa-result-card');
-  if (card) {
-    if (gpa >= 3.7)      card.style.background = 'linear-gradient(135deg, #059669, #0ea5e9)';
-    else if (gpa >= 3.0) card.style.background = 'linear-gradient(135deg, #0ea5e9, #6366f1)';
-    else if (gpa >= 2.0) card.style.background = 'linear-gradient(135deg, #f59e0b, #f97316)';
-    else if (gpa > 0)    card.style.background = 'linear-gradient(135deg, #ef4444, #f97316)';
-    else                 card.style.background = 'linear-gradient(135deg, #0ea5e9, #6366f1)';
-  }
 
-  // Render chart
-  renderGPABar(courses);
-}
+    if (card) {
+      if (gpa >= 3.7) {
+        card.style.background = '#914820ff';
+      } else if (gpa >= 3.0) {
+        card.style.background = '#085c0bff';
+      } else if (gpa >= 2.0) {
+        card.style.background = 'rgba(245, 223, 27, 1)';
+      } else if (gpa > 0) {
+        card.style.background = '#204D91';
+      } else {
+        card.style.background = 'var(--clr-primary)';
+      }
+    }
+
+      // Render chart
+      renderGPABar(courses);
+  }
 
 function academicStanding(gpa) {
   if (gpa >= 3.9) return '🏆 Summa Cum Laude';

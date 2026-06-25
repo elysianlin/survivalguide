@@ -72,7 +72,7 @@
 
 /* Quote card */
 .quote-card {
-  background: linear-gradient(135deg, var(--clr-primary) 0%, #4f46e5 100%);
+  background: var(--clr-primary);
   color: white;
   border-radius: var(--radius-xl);
   padding: var(--sp-8);
@@ -222,7 +222,6 @@
   stroke-linecap: round;
   stroke-dasharray: 440;
   stroke-dashoffset: 0;
-  transition: stroke-dashoffset 1s linear, stroke var(--transition-normal);
 }
 .pomodoro-progress.break { stroke: var(--clr-success); }
 .pomodoro-time-text {
@@ -434,7 +433,7 @@
   align-items: start;
 }
 .gpa-result-card {
-  background: linear-gradient(135deg, #0ea5e9, #6366f1);
+  background: var(--clr-primary);
   color: white;
   border-radius: var(--radius-xl);
   padding: var(--sp-8);
@@ -599,7 +598,6 @@
   height: 10px;
   top: -10px;
   border-radius: 2px;
-  animation: confettiFall linear forwards;
   z-index: 9998;
 }
 @keyframes confettiFall {

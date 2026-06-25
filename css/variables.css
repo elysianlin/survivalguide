@@ -2,38 +2,47 @@
    variables.css
    Single source of truth for all design tokens
    ============================================ */
+
 :root {
   /* --- Brand Colors --- */
-  --clr-primary:       #134074;   /* navy blue */
-  --clr-primary-dark:  #0B2545;   /* deep navy */
-  --clr-primary-mid:   #13315C;   /* dark navy */
-  --clr-primary-light: #8DA9C4;   /* steel blue */
-  --clr-accent:        #8DA9C4;   /* steel blue — secondary accent */
-  --clr-accent-dark:   #134074;
-  --clr-danger:        #ef4444;
-  --clr-danger-light:  #fca5a5;
-  --clr-success:       #22c55e;
-  --clr-success-light: #bbf7d0;
-  --clr-warning:       #f97316;
+  --clr-primary:       #204D91;   /* clear modern blue */
+  --clr-primary-dark:  #204D91;   /* deep blue */
+  --clr-primary-mid:   #204D91;   /* strong blue */
+  --clr-primary-light: #204D91;   /* soft blue */
+  
+  --clr-total:         #f59520;   /* bright yellow */
+  
+  --clr-accent:        #a61111;   /* teal accent */
+  --clr-accent-dark:   #ff4491;
+
+  --clr-danger:        #8e2582;
+  --clr-danger-light:  #FEE2E2;
+
+  --clr-success:       #4b8130;
+  --clr-success-light: #4b8130;
+
+  --clr-warning:       #F59E0B;
 
   /* --- Neutrals (Light Mode) --- */
-  --clr-bg:            #EEF4ED;   /* off-white green tint */
-  --clr-surface:       #ffffff;
-  --clr-surface-2:     #f4f8f7;
-  --clr-border:        #8DA9C4;   /* steel blue border */
-  --clr-text:          #0B2545;   /* deep navy text */
-  --clr-text-muted:    #13315C;
-  --clr-text-inverse:  #EEF4ED;
+  --clr-bg:            #FFFFFF;   /* very light slate */
+  --clr-surface:       #FFFFFF;
+  --clr-surface-2:     #FFFFFF;
+  --clr-border:        #FFFFFF;
+
+  --clr-text:          #0F172A;   /* high contrast dark text */
+  --clr-text-muted:    #64748B;   /* readable muted text */
+  --clr-text-inverse:  #FFFFFF;
 
   /* --- Priority Colors --- */
-  --clr-high:   #ef4444;
-  --clr-medium: #f97316;
-  --clr-low:    #22c55e;
+  --clr-high:   #DC2626;
+  --clr-medium: #F59E0B;
+  --clr-low:    #16A34A;
 
   /* --- Typography --- */
   --font-display: "Archivo Black", sans-serif;
-  --font-body:    'DM Sans', sans-serif;
-  --font-mono:    'JetBrains Mono', monospace;
+  --font-body:    "DM Sans", sans-serif;
+  --font-mono:    "JetBrains Mono", monospace;
+
   --fs-xs:   0.75rem;
   --fs-sm:   0.875rem;
   --fs-base: 1rem;
@@ -43,11 +52,13 @@
   --fs-2xl:  1.875rem;
   --fs-3xl:  2.25rem;
   --fs-4xl:  3rem;
+
   --fw-normal:    400;
   --fw-medium:    500;
   --fw-semibold:  600;
   --fw-bold:      700;
   --fw-extrabold: 800;
+
   --lh-tight:  1.2;
   --lh-normal: 1.5;
   --lh-loose:  1.75;
@@ -74,10 +85,10 @@
   --radius-full: 9999px;
 
   /* --- Shadows --- */
-  --shadow-sm:  0 1px 3px rgba(11, 37, 69, 0.10);
-  --shadow-md:  0 4px 16px rgba(11, 37, 69, 0.16);
-  --shadow-lg:  0 8px 32px rgba(11, 37, 69, 0.22);
-  --shadow-xl:  0 16px 48px rgba(11, 37, 69, 0.30);
+  --shadow-sm:  0 1px 3px rgba(15, 23, 42, 0.08);
+  --shadow-md:  0 4px 16px rgba(15, 23, 42, 0.12);
+  --shadow-lg:  0 8px 32px rgba(15, 23, 42, 0.16);
+  --shadow-xl:  0 16px 48px rgba(15, 23, 42, 0.20);
 
   /* --- Transitions --- */
   --transition-fast:   150ms ease;
@@ -90,18 +101,44 @@
   --sidebar-width:   260px;
 }
 
+
 /* ============================================
    Dark Mode Overrides
    ============================================ */
+
 [data-theme="dark"] {
-  --clr-bg:         #0B2545;   /* deep navy bg */
-  --clr-surface:    #13315C;   /* dark navy surface */
-  --clr-surface-2:  #134074;   /* navy surface-2 */
-  --clr-border:     #8DA9C4;   /* steel blue border */
-  --clr-text:       #EEF4ED;   /* off-white text */
-  --clr-text-muted: #8DA9C4;   /* steel blue muted */
-  --shadow-sm: 0 1px 3px rgba(0,0,0,0.5);
-  --shadow-md: 0 4px 16px rgba(0,0,0,0.6);
-  --shadow-lg: 0 8px 32px rgba(0,0,0,0.7);
-  --shadow-xl: 0 16px 48px rgba(0,0,0,0.8);
+  --clr-bg:         #020617;   /* deep navy-black */
+  --clr-surface:    #0F172A;   /* slate surface */
+  --clr-surface-2:  #1E293B;   /* elevated surface */
+
+  --clr-border:     #334155;
+
+  --clr-text:       #F8FAFC;   /* clear readable text */
+  --clr-text-muted: #94A3B8;
+  --clr-text-inverse: #020617;
+
+  --clr-primary:       #c29D59;
+  --clr-primary-dark:  #c29D59;
+  --clr-primary-mid:   #c29D59;
+  --clr-primary-light: #c29D59;
+
+  --clr-accent:        #b51c1e;
+  --clr-accent-dark:   #b51c1e;
+
+  --clr-danger:        #F87171;
+  --clr-danger-light:  #7F1D1D;
+
+  --clr-success:       #4ADE80;
+  --clr-success-light: #14532D;
+
+  --clr-warning:       #FBBF24;
+
+  --clr-high:   #F87171;
+  --clr-medium: #FBBF24;
+  --clr-low:    #4ADE80;
+
+  --shadow-sm:  0 1px 3px rgba(0, 0, 0, 0.35);
+  --shadow-md:  0 4px 16px rgba(0, 0, 0, 0.45);
+  --shadow-lg:  0 8px 32px rgba(0, 0, 0, 0.55);
+  --shadow-xl:  0 16px 48px rgba(0, 0, 0, 0.65);
 }

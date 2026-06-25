@@ -179,6 +179,7 @@ input::placeholder { color: var(--clr-text-muted); }
 }
 .btn-primary:hover {
   background: var(--clr-primary-dark);
+  color: #fff;
   box-shadow: 0 4px 14px rgba(37, 99, 235, 0.45);
   transform: translateY(-1px);
 }
