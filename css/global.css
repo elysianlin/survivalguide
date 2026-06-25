@@ -297,7 +297,7 @@ input::placeholder { color: var(--clr-text-muted); }
 /* Toast notifications */
 #toast-container {
   position: fixed;
-  bottom: var(--sp-6);
+  top: var(--sp-6);
   right: var(--sp-6);
   display: flex;
   flex-direction: column;

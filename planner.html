@@ -151,7 +151,7 @@
         <h2 style="font-size:var(--fs-xl); margin-bottom:var(--sp-4); display: inline-flex; align-items: center; gap: var(--sp-2)">
           <i class="ti ti-calendar-due" style="color: var(--clr-primary)"></i> Exam Countdown
         </h2>
-        <div style="display:grid; grid-template-columns:1fr 320px; gap:var(--sp-6); align-items:start">
+        <div class="exam-layout"
 
           <!-- Existing exams -->
           <div class="card">
@@ -170,7 +170,7 @@
               </div>
               <div class="form-group" style="margin-bottom:var(--sp-3)">
                 <label for="exam-course">Course</label>
-                <input type="text" id="exam-course" placeholder="WDD 231" list="course-datalist">
+                <input type="text" id="exam-course" placeholder="WDD 231" list="course-datalist" required>
               </div>
               <div class="form-group" style="margin-bottom:var(--sp-5)">
                 <label for="exam-date">Exam Date</label>
