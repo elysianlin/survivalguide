@@ -4,37 +4,9 @@
  * Used by index.html
  */
 
-import { getTheme, saveTheme, getAssignments, getExams } from './storage.js';
+import { getAssignments, getExams } from './storage.js';
 import { daysUntil, showToast, launchConfetti } from './utils.js';
-
-// ================================================================
-// THEME
-// ================================================================
-function applyTheme(theme) {
-  document.documentElement.setAttribute('data-theme', theme);
-  
-  // Target the icon element directly using its specific ID
-  const iconEl = document.getElementById('theme-toggle-icon');
-  if (iconEl) {
-    // Dynamically swap the structural Tabler Icon classes
-    if (theme === 'dark') {
-      iconEl.className = 'ti ti-sun';
-    } else {
-      iconEl.className = 'ti ti-moon';
-    }
-  }
-}
-
-function initTheme() {
-  const saved = getTheme();
-  applyTheme(saved);
-  document.getElementById('theme-toggle')?.addEventListener('click', () => {
-    const current = document.documentElement.getAttribute('data-theme') || 'light';
-    const next = current === 'dark' ? 'light' : 'dark';
-    applyTheme(next);
-    saveTheme(next);
-  });
-}
+import { initLayout } from './layout.js';
 
 // ================================================================
 // HEADER SCROLL SHADOW
@@ -45,39 +17,6 @@ function initHeaderScroll() {
   window.addEventListener('scroll', () => {
     header.classList.toggle('scrolled', window.scrollY > 10);
   }, { passive: true });
-}
-
-// ================================================================
-// MOBILE NAV
-// ================================================================
-function initMobileNav() {
-  const hamburger = document.querySelector('.hamburger');
-  const mobileNav  = document.querySelector('.mobile-nav');
-  if (!hamburger || !mobileNav) return;
-  hamburger.addEventListener('click', () => {
-    hamburger.classList.toggle('open');
-    mobileNav.classList.toggle('open');
-  });
-  // Close on link click
-  mobileNav.querySelectorAll('a').forEach(link => {
-    link.addEventListener('click', () => {
-      hamburger.classList.remove('open');
-      mobileNav.classList.remove('open');
-    });
-  });
-}
-
-// ================================================================
-// ACTIVE NAV LINK
-// ================================================================
-function initActiveNav() {
-  const currentPage = location.pathname.split('/').pop() || 'index.html';
-  document.querySelectorAll('.nav-link').forEach(link => {
-    const href = link.getAttribute('href');
-    if (href === currentPage || (currentPage === '' && href === 'index.html')) {
-      link.classList.add('active');
-    }
-  });
 }
 
 // ================================================================
@@ -356,10 +295,8 @@ function initNewsletter() {
 // INIT
 // ================================================================
 document.addEventListener('DOMContentLoaded', () => {
-  initTheme();
+  initLayout();
   initHeaderScroll();
-  initMobileNav();
-  initActiveNav();
   initDashboardData();
   initCountdowns();
   initStats();

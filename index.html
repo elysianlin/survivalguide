@@ -247,58 +247,8 @@
 
   <!-- Script (module so it can use import) -->
   <script type="module" src="js/main.js"></script>
-  <script type="module">
-    // Inline supplementary dashboard logic
-    import { getAssignments } from './js/storage.js';
-    import { formatDate, daysUntil, dueDateClass } from './js/utils.js';
-    import { getGPACourses } from './js/storage.js';
-    import { calculateGPA } from './js/utils.js';
+  <script type="module" src="js/dashboard.js"></script>
 
-    // Greeting
-    const greetEl = document.getElementById('greeting');
-    if (greetEl) {
-      const h = new Date().getHours();
-      const g = h < 12 ? 'Good morning' : h < 17 ? 'Good afternoon' : 'Good evening';
-      const days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
-      greetEl.textContent = `${g} — ${days[new Date().getDay()]}, ${new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'})}`;
-    }
-
-    // Footer year
-    const fy = document.getElementById('footer-year');
-    if (fy) fy.textContent = new Date().getFullYear();
-
-    // Recent assignments widget
-    const container = document.getElementById('recent-assignments');
-    const all = getAssignments()
-      .filter(a => a.status !== 'done')
-      .sort((a,b) => (a.dueDate||'9999') < (b.dueDate||'9999') ? -1 : 1)
-      .slice(0, 5);
-
-    if (container && all.length > 0) {
-      container.innerHTML = all.map(a => {
-        const dc = dueDateClass(a.dueDate);
-        const days = daysUntil(a.dueDate);
-        const daysStr = days < 0 ? `${Math.abs(days)}d overdue` : days === 0 ? 'Today!' : `${days}d`;
-        return `
-          <div style="display:flex; align-items:center; gap:var(--sp-4); padding:var(--sp-3) 0; border-bottom:1px solid var(--clr-border)">
-            <div style="flex:1">
-              <div style="font-weight:600; font-size:var(--fs-sm)">${a.taskName}</div>
-              <div style="font-size:var(--fs-xs); color:var(--clr-text-muted)">${a.courseName}</div>
-            </div>
-            <div style="text-align:right">
-              <div class="due-date ${dc}" style="font-size:var(--fs-xs)">${daysStr}</div>
-              <span class="badge badge-${a.priority}" style="margin-top:2px">${a.priority}</span>
-            </div>
-          </div>`;
-      }).join('');
-    }
-
-    // Header GPA
-    const gpaCourses = getGPACourses();
-    const gpa = calculateGPA(gpaCourses);
-    const headerGpa = document.getElementById('header-gpa');
-    if (headerGpa && gpaCourses.length > 0) headerGpa.textContent = gpa.toFixed(2);
-  </script>
 
 </body>
 </html>

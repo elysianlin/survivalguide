@@ -301,39 +301,5 @@
   <div id="toast-container" role="status" aria-live="polite"></div>
 
   <script type="module" src="js/planner.js"></script>
-  <script type="module">
-    // Theme toggle + nav active (shared snippet)
-    import { getTheme, saveTheme } from './js/storage.js';
-    const applyTheme = t => {
-      document.documentElement.setAttribute('data-theme', t);
-      const iconEl = document.getElementById('theme-toggle-icon');
-      
-      if (iconEl) {
-        // Dynamically update the class names for your vector icon
-        if (t === 'dark') {
-          iconEl.className = 'ti ti-sun';
-        } else {
-          iconEl.className = 'ti ti-moon';
-        }
-      }
-    };
-    applyTheme(getTheme());
-    document.getElementById('theme-toggle')?.addEventListener('click', () => {
-      const n = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
-      applyTheme(n); saveTheme(n);
-    });
-    // hamburger
-    document.getElementById('hamburger')?.addEventListener('click', () => {
-      document.getElementById('hamburger').classList.toggle('open');
-      document.getElementById('mobile-nav').classList.toggle('open');
-    });
-    // active nav
-    document.querySelectorAll('.nav-link').forEach(l => {
-      if (l.getAttribute('href') === 'planner.html') l.classList.add('active');
-    });
-    // footer year
-    const fy = document.getElementById('footer-year');
-    if (fy) fy.textContent = new Date().getFullYear();
-  </script>
 </body>
 </html>

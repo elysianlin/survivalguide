@@ -19,11 +19,7 @@ function initGreeting() {
   greetEl.textContent = `${g} — ${days[new Date().getDay()]}, ${new Date().toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'})}`;
 }
 
-// Footer year
-function initFooterYear() {
-  const fy = document.getElementById('footer-year');
-  if (fy) fy.textContent = new Date().getFullYear();
-}
+// Footer year is handled by the shared layout.js module (loaded via main.js)
 
 // Recent assignments widget
 function initRecentAssignments() {
@@ -66,7 +62,6 @@ function initHeaderGPA() {
 // Initialize all dashboard features
 document.addEventListener('DOMContentLoaded', () => {
   initGreeting();
-  initFooterYear();
   initRecentAssignments();
   initHeaderGPA();
 });

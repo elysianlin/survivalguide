@@ -12,6 +12,7 @@ import {
   generateId, formatDate, todayISO, daysUntil, dueDateClass,
   validateAssignment, showToast, launchConfetti,
 } from './utils.js';
+import { initLayout } from './layout.js';
 
 // ================================================================
 // STATE
@@ -379,6 +380,7 @@ function initExamForm() {
 // INIT
 // ================================================================
 document.addEventListener('DOMContentLoaded', () => {
+  initLayout();
   assignments = getAssignments();
   exams       = getExams();
 

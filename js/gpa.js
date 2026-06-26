@@ -7,6 +7,7 @@
 
 import { getGPACourses, saveGPACourses } from './storage.js';
 import { generateId, calculateGPA, gpaToLetter, isValidCredits, showToast } from './utils.js';
+import { initLayout } from './layout.js';
 
 // ================================================================
 // STATE
@@ -257,6 +258,7 @@ function initClearAll() {
 // INIT
 // ================================================================
 document.addEventListener('DOMContentLoaded', () => {
+  initLayout();
   courses = getGPACourses();
   renderCourses();
   updateGPADisplay();

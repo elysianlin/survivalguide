@@ -236,35 +236,6 @@
 
   <div id="toast-container" role="status" aria-live="polite"></div>
 
-  <script type="module" src="../js/gpa.js"></script>
-  <script type="module">
-    import { getTheme, saveTheme } from '../js/storage.js';
-    const applyTheme = t => {
-      document.documentElement.setAttribute('data-theme', t);
-      const iconEl = document.getElementById('theme-toggle-icon');
-      
-      if (iconEl) {
-        if (t === 'dark') {
-          iconEl.className = 'ti ti-sun';
-        } else {
-          iconEl.className = 'ti ti-moon';
-        }
-      }
-    };
-    applyTheme(getTheme());
-    document.getElementById('theme-toggle')?.addEventListener('click', () => {
-      const n = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
-      applyTheme(n); saveTheme(n);
-    });
-    document.getElementById('hamburger')?.addEventListener('click', () => {
-      document.getElementById('hamburger').classList.toggle('open');
-      document.getElementById('mobile-nav').classList.toggle('open');
-    });
-    document.querySelectorAll('.nav-link').forEach(l => {
-      if (l.getAttribute('href') === 'gpa.html') l.classList.add('active');
-    });
-    const fy = document.getElementById('footer-year');
-    if (fy) fy.textContent = new Date().getFullYear();
-  </script>
+  <script type="module" src="js/gpa.js"></script>
 </body>
 </html>
