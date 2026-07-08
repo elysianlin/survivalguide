@@ -265,3 +265,40 @@ document.addEventListener('DOMContentLoaded', () => {
   initAddCourse();
   initClearAll();
 });
+
+// Ensure the DOM is fully loaded before trying to access elements
+document.addEventListener("DOMContentLoaded", () => {
+    
+    // 1. Grab the query string from the URL
+    const urlParams = new URLSearchParams(window.location.search);
+
+    // 2. Check if the 'targetGpa' parameter exists in the URL
+    if (urlParams.has('targetGpa')) {
+        const targetValue = urlParams.get('targetGpa');
+        
+        // Target your form's input field for the target GPA
+        // IMPORTANT: Change 'target-gpa-input' to the exact ID you used in your HTML
+        const targetInput = document.getElementById('target-gpa-input'); 
+        
+        if (targetInput) {
+            targetInput.value = targetValue;
+        }
+    }
+
+    // 3. Check if the 'currentCredits' parameter exists
+    if (urlParams.has('currentCredits')) {
+        const creditsValue = urlParams.get('currentCredits');
+        
+        // Target your form's input field for the current credits
+        // IMPORTANT: Change 'credits-input' to the exact ID you used in your HTML
+        const creditsInput = document.getElementById('credits-input');
+        
+        if (creditsInput) {
+            creditsInput.value = creditsValue;
+        }
+    }
+
+    // Optional: If your calculator has a main function (e.g., calculateGPA()), 
+    // you could call it here so it calculates automatically on page load:
+    // if (urlParams.has('targetGpa')) { calculateGPA(); }
+});
