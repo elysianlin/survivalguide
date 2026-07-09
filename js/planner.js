@@ -10,7 +10,8 @@ import {
 } from './storage.js';
 import {
   generateId, formatDate, todayISO, daysUntil, dueDateClass,
-  validateAssignment, showToast, launchConfetti,
+  validateAssignment, showToast, launchConfetti, confirmDialog,
+  getURLParam, setURLParams, buildLink,
 } from './utils.js';
 import { initLayout } from './layout.js';
 
@@ -54,11 +55,11 @@ function renderTable() {
     tbody.innerHTML = `
       <tr><td colspan="7"> <div class="empty-state">
           <div class="empty-icon">
-            <i class="ti ti-notes-off"></i>
+            <i class="ti ti-notes-off" aria-hidden="true"></i>
           </div>
           <p style="margin-bottom: var(--sp-3)">No assignments found.</p>
           <button class="btn btn-primary btn-sm" id="empty-add-btn" style="display: inline-flex; align-items: center; gap: var(--sp-1); margin-inline: auto;">
-            <i class="ti ti-plus" style="font-size: 0.9rem; margin: 0"></i> Add one
+            <i class="ti ti-plus" style="font-size: 0.9rem; margin: 0" aria-hidden="true"></i> Add one
           </button>
         </div>
       </td></tr>`;
@@ -92,11 +93,15 @@ function renderTable() {
         <td><span class="badge badge-${a.status === 'done' ? 'done' : 'pending'}">${statusLabel(a.status)}</span></td>
         <td>
           <div class="row-actions">
+            <a class="btn btn-ghost btn-icon" href="${buildLink('gpa.html', { course: a.courseName, credits: 3 })}"
+              title="Log a grade for this course" aria-label="Add ${escHtml(a.courseName)} to GPA calculator">
+              <i class="ti ti-report-analytics" aria-hidden="true"></i>
+            </a>
             <button class="btn btn-ghost btn-icon edit-btn" data-id="${a.id}" title="Edit" aria-label="Edit assignment">
-              <i class="ti ti-pencil"></i>
+              <i class="ti ti-pencil" aria-hidden="true"></i>
             </button>
             <button class="btn btn-ghost btn-icon delete-btn" data-id="${a.id}" title="Delete" aria-label="Delete assignment" style="color: var(--clr-danger);">
-              <i class="ti ti-trash"></i>
+              <i class="ti ti-trash" aria-hidden="true"></i>
             </button>
           </div>
         </td>
@@ -137,17 +142,47 @@ function populateCourseFilter() {
   if (filterCourse !== 'all') sel.value = filterCourse;
 }
 
+function syncFiltersToURL() {
+  setURLParams({ course: filterCourse, status: filterStatus, priority: filterPriority });
+}
+
+/**
+ * Read course/status/priority from the URL on page load, so links from the
+ * dashboard (e.g. "View all pending →") land on a pre-filtered planner view.
+ * Example: planner.html?status=pending
+ */
+function initFiltersFromURL() {
+  const course   = getURLParam('course');
+  const status   = getURLParam('status');
+  const priority = getURLParam('priority');
+
+  if (course)   filterCourse   = course;
+  if (status)   filterStatus   = status;
+  if (priority) filterPriority = priority;
+
+  if (status) {
+    document.getElementById('filter-status').value = status;
+    document.querySelectorAll('.filter-chip[data-filter-type="status"]').forEach(c => {
+      c.classList.toggle('active', c.dataset.value === status);
+    });
+  }
+  if (priority) document.getElementById('filter-priority').value = priority;
+}
+
 function initFilters() {
   document.getElementById('filter-course')?.addEventListener('change', e => {
     filterCourse = e.target.value;
+    syncFiltersToURL();
     renderTable();
   });
   document.getElementById('filter-status')?.addEventListener('change', e => {
     filterStatus = e.target.value;
+    syncFiltersToURL();
     renderTable();
   });
   document.getElementById('filter-priority')?.addEventListener('change', e => {
     filterPriority = e.target.value;
+    syncFiltersToURL();
     renderTable();
   });
 
@@ -160,6 +195,7 @@ function initFilters() {
       chip.classList.add('active');
       if (type === 'status')   filterStatus   = val;
       if (type === 'priority') filterPriority = val;
+      syncFiltersToURL();
       renderTable();
     });
   });
@@ -206,10 +242,13 @@ function handleComplete(e) {
   updateStats();
 }
 
-function handleDelete(id) {
+async function handleDelete(id) {
   const a = assignments.find(a => a.id === id);
   if (!a) return;
-  if (!confirm(`Delete "${a.taskName}"? This cannot be undone.`)) return;
+  const ok = await confirmDialog(`Delete "${a.taskName}"? This cannot be undone.`, {
+    title: 'Delete Assignment', confirmLabel: 'Delete',
+  });
+  if (!ok) return;
   deleteAssignment(id);
   assignments = getAssignments();
   populateCourseFilter();
@@ -317,12 +356,19 @@ function handleFormSubmit(e) {
 async function initCourseDatalist() {
   try {
     const res = await fetch('data/courses.json');
+    if (!res.ok) throw new Error('Course data unavailable');
     const data = await res.json();
-    const list = document.getElementById('course-datalist');
-    if (!list) return;
     const all = data.departments.flatMap(d => d.courses.map(c => c.code));
-    list.innerHTML = all.map(c => `<option value="${c}">`).join('');
-  } catch { /* silent fail */ }
+    const optionsHTML = all.map(c => `<option value="${c}">`).join('');
+
+    // Populate every course datalist on the page (assignment modal + exam form)
+    ['course-datalist', 'exam-course-datalist'].forEach(id => {
+      const list = document.getElementById(id);
+      if (list) list.innerHTML = optionsHTML;
+    });
+  } catch (err) {
+    console.warn('Could not load course list for autocomplete:', err);
+  }
 }
 
 // ================================================================
@@ -346,7 +392,7 @@ function renderExams() {
         <div class="countdown-course">${escHtml(e.course)} — ${formatDate(e.date)}</div>
       </div>
       <button class="btn btn-ghost btn-icon btn-sm delete-exam-btn" data-id="${e.id}">
-        <i class="ti ti-trash"></i>
+        <i class="ti ti-trash" aria-hidden="true"></i>
       </button>
     </div>`).join('');
 
@@ -359,20 +405,66 @@ function renderExams() {
   });
 }
 
+function setExamFieldError(field, message) {
+  const el = document.getElementById(`err-exam-${field}`);
+  if (el) el.textContent = message;
+  const input = document.getElementById(`exam-${field}`);
+  if (input) input.setAttribute('aria-invalid', message ? 'true' : 'false');
+}
+function clearExamFieldErrors() {
+  ['name', 'course', 'date'].forEach(f => setExamFieldError(f, ''));
+}
+
+/**
+ * Validate the exam form field-by-field (rather than one generic
+ * "fields missing" toast) so the student knows exactly which input needs
+ * attention — mirrors the pattern already used by the assignment modal.
+ */
+function validateExamForm({ name, course, date }) {
+  const errors = {};
+  if (!name || name.length < 2)      errors.name   = 'Exam name is required.';
+  if (!course || course.length < 2)  errors.course = 'Course is required.';
+  if (!date)                         errors.date   = 'Exam date is required.';
+  else if (date < todayISO())        errors.date   = 'Exam date cannot be in the past.';
+  return { valid: Object.keys(errors).length === 0, errors };
+}
+
 function initExamForm() {
   const form = document.getElementById('exam-form');
   if (!form) return;
+
+  const dateInput = document.getElementById('exam-date');
+  if (dateInput) dateInput.min = todayISO();
+
   form.addEventListener('submit', e => {
     e.preventDefault();
-    const name   = document.getElementById('exam-name')?.value.trim();
-    const course = document.getElementById('exam-course')?.value.trim();
-    const date   = document.getElementById('exam-date')?.value;
-    if (!name || !course || !date) { showToast('Please fill in all exam fields.', 'warning'); return; }
+    clearExamFieldErrors();
+
+    const name   = document.getElementById('exam-name')?.value.trim() ?? '';
+    const course = document.getElementById('exam-course')?.value.trim() ?? '';
+    const date   = document.getElementById('exam-date')?.value ?? '';
+
+    const { valid, errors } = validateExamForm({ name, course, date });
+    if (!valid) {
+      Object.entries(errors).forEach(([field, msg]) => setExamFieldError(field, msg));
+      showToast('Please fix the highlighted exam fields.', 'warning');
+      return;
+    }
+
     exams.push({ id: generateId(), name, course, date });
     saveExams(exams);
     form.reset();
+    if (dateInput) dateInput.min = todayISO();
+    clearExamFieldErrors();
     renderExams();
-    showToast('Exam added!', 'success');
+    showToast(`"${name}" exam added!`, 'success');
+  });
+
+  // Clear a field's error as soon as the user starts fixing it
+  ['exam-name', 'exam-course', 'exam-date'].forEach(id => {
+    document.getElementById(id)?.addEventListener('input', () => {
+      setExamFieldError(id.replace('exam-', ''), '');
+    });
   });
 }
 
@@ -384,6 +476,7 @@ document.addEventListener('DOMContentLoaded', () => {
   assignments = getAssignments();
   exams       = getExams();
 
+  initFiltersFromURL();   // apply ?course= / ?status= / ?priority= from the URL, if present
   renderTable();
   populateCourseFilter();
   updateStats();
@@ -395,6 +488,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Modal open/close
   document.getElementById('add-assignment-btn')?.addEventListener('click', openAddModal);
+
+  // Deep link support: planner.html?new=1 opens the Add Assignment modal
+  // immediately (used by the dashboard's "+ New Assignment" button).
+  if (getURLParam('new') === '1') {
+    openAddModal();
+    setURLParams({ new: null }); // clean the URL so refresh doesn't reopen it
+  }
   document.getElementById('modal-close-btn')?.addEventListener('click', closeModal);
   document.getElementById('modal-cancel-btn')?.addEventListener('click', closeModal);
   document.getElementById('assignment-form')?.addEventListener('submit', handleFormSubmit);

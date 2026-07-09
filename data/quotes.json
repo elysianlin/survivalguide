@@ -1,0 +1,20 @@
+[
+  { "text": "First, solve the problem. Then, write the code.", "author": "John Johnson", "category": "coding" },
+  { "text": "Truth can only be found in one place: the code.", "author": "Robert C. Martin", "category": "coding" },
+  { "text": "Any fool can write code a computer can understand. Good programmers write code humans can understand.", "author": "Martin Fowler", "category": "coding" },
+  { "text": "Experience is the name everyone gives to their mistakes.", "author": "Oscar Wilde", "category": "growth" },
+  { "text": "Sometimes it pays to stay in bed on Monday, rather than spending the rest of the week debugging Monday's code.", "author": "Dan Salomon", "category": "humor" },
+  { "text": "It always seems impossible until it's done.", "author": "Nelson Mandela", "category": "motivation" },
+  { "text": "The secret of getting ahead is getting started.", "author": "Mark Twain", "category": "motivation" },
+  { "text": "Don't watch the clock; do what it does. Keep going.", "author": "Sam Levenson", "category": "motivation" },
+  { "text": "Success is the sum of small efforts, repeated day in and day out.", "author": "Robert Collier", "category": "consistency" },
+  { "text": "The expert in anything was once a beginner.", "author": "Helen Hayes", "category": "growth" },
+  { "text": "You don't have to be great to start, but you have to start to be great.", "author": "Zig Ziglar", "category": "motivation" },
+  { "text": "Study while others are sleeping; work while others are loafing.", "author": "William A. Ward", "category": "discipline" },
+  { "text": "A little progress each day adds up to big results.", "author": "Satya Nani", "category": "consistency" },
+  { "text": "Push yourself, because no one else is going to do it for you.", "author": "Unknown", "category": "discipline" },
+  { "text": "Procrastination makes easy things hard, and hard things harder.", "author": "Mason Cooley", "category": "humor" },
+  { "text": "The future depends on what you do today.", "author": "Mahatma Gandhi", "category": "motivation" },
+  { "text": "Learning never exhausts the mind.", "author": "Leonardo da Vinci", "category": "growth" },
+  { "text": "Coffee: because adulting and studying is hard.", "author": "Unknown", "category": "humor" }
+]

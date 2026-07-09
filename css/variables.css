@@ -24,13 +24,13 @@
   --clr-warning:       #F59E0B;
 
   /* --- Neutrals (Light Mode) --- */
-  --clr-bg:            #FFFFFF;   /* very light slate */
-  --clr-surface:       #ffffff;
-  --clr-surface-2:     #FFFFFF;
+  --clr-bg:            #F7F9FC;   /* very light slate — gives cards visible lift */
+  --clr-surface:       #FFFFFF;
+  --clr-surface-2:     #EEF2F9;   /* subtly distinct from surface for depth */
   --clr-border:        #204D91;
 
   --clr-text:          #0F172A;   /* high contrast dark text */
-  --clr-text-muted:    #64748B;   /* readable muted text */
+  --clr-text-muted:    #566073;   /* darkened from #64748B for a safer 4.5:1+ AA margin */
   --clr-text-inverse:  #FFFFFF;
 
   /* --- Priority Colors --- */

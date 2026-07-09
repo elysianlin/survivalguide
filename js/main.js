@@ -22,50 +22,59 @@ function initHeaderScroll() {
 // ================================================================
 // DAILY QUOTE AND COURSES (JSON FETCH)
 // ================================================================
+let allQuotes = [];
+
+function renderRandomQuote() {
+  const quoteTextEl = document.getElementById('quote-text');
+  const quoteAuthorEl = document.getElementById('quote-author');
+  if (!quoteTextEl || !quoteAuthorEl || allQuotes.length === 0) return;
+  const q = allQuotes[Math.floor(Math.random() * allQuotes.length)];
+  quoteTextEl.textContent = `"${q.text}"`;
+  quoteAuthorEl.textContent = `— ${q.author}`;
+}
+
 async function initDashboardData() {
   try {
-    // Fetch both JSON files simultaneously
+    // Fetch both JSON files simultaneously (single source of truth in /data)
     const [quotesResponse, coursesResponse] = await Promise.all([
-      fetch('js/quotes.json'),
-      fetch('js/courses.json')
+      fetch('data/quotes.json'),
+      fetch('data/courses.json')
     ]);
 
-    // Parse the JSON data
-    const quotes = await quotesResponse.json();
-    const courses = await coursesResponse.json();
+    if (!quotesResponse.ok || !coursesResponse.ok) throw new Error('Data fetch failed');
 
-    // 1. Populate a Random Quote
-    const quoteTextEl = document.getElementById('quote-text');
-    const quoteAuthorEl = document.getElementById('quote-author');
-    
-    // Only try to update the DOM if the elements exist on the current page
-    if (quoteTextEl && quoteAuthorEl && quotes.length > 0) {
-      const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
-      quoteTextEl.textContent = `"${randomQuote.text}"`;
-      quoteAuthorEl.textContent = `— ${randomQuote.author}`;
-    }
+    allQuotes = await quotesResponse.json();
+    const courseData = await coursesResponse.json();
+    const courses = (courseData.departments || []).flatMap(d => d.courses);
 
-    // 2. Populate the Courses into the Countdown List
+    // 1. Show a random quote
+    renderRandomQuote();
+
+    // 2. Populate the "This Semester" course chips into the sidebar
     const countdownList = document.getElementById('countdown-list');
-    
-    // Append the courses to existing items
-    if (countdownList && courses.length > 0) {
-      const coursesHTML = courses.map(course => `
-        <div style="display:flex; justify-content:space-between; padding:var(--sp-2) 0; border-bottom:1px solid var(--clr-border)">
+    if (countdownList && courses.length > 0 && countdownList.children.length === 0) {
+      const coursesHTML = courses.slice(0, 5).map(course => `
+        <div style="display:flex; justify-content:space-between; align-items:center; gap:var(--sp-3); padding:var(--sp-2) 0; border-bottom:1px solid var(--clr-border)">
           <div>
             <strong>${course.code}</strong>
             <div style="font-size:var(--fs-xs); color:var(--clr-text-muted)">${course.name}</div>
           </div>
-          <span class="badge badge-medium">${course.credits} Cr</span>
+          <span class="badge badge-medium" style="background:${course.color}22; color:${course.color}">${course.credits} Cr</span>
         </div>
       `).join('');
-      
-      countdownList.innerHTML += coursesHTML;
+      countdownList.insertAdjacentHTML('afterbegin', coursesHTML);
     }
 
   } catch (error) {
     console.error("Error loading JSON data:", error);
+    const quoteTextEl = document.getElementById('quote-text');
+    if (quoteTextEl) quoteTextEl.textContent = "Keep going — you've got this!";
   }
+}
+
+// Quote refresh button now cycles through the fetched list instead of reloading
+function initQuoteRefresh() {
+  document.getElementById('quote-refresh')?.addEventListener('click', renderRandomQuote);
 }
 
 // ================================================================
@@ -81,11 +90,11 @@ function initCountdowns() {
       container.innerHTML = `
         <div class="empty-state" style="padding: var(--sp-8);">
           <div class="empty-icon">
-            <i class="ti ti-calendar-off"></i>
+            <i class="ti ti-calendar-off" aria-hidden="true"></i>
           </div>
           <p>No exams added yet.<br>
           <a href="planner.html" style="display: inline-flex; align-items: center; gap: 4px; margin-top: var(--sp-1)">
-            Add an exam <i class="ti ti-arrow-right" style="font-size: 0.9rem; margin: 0"></i>
+            Add an exam <i class="ti ti-arrow-right" style="font-size: 0.9rem; margin: 0" aria-hidden="true"></i>
           </a></p>
         </div>`;
       return;
@@ -173,9 +182,9 @@ function initPomodoro() {
     // Dynamically inject vector icon classes alongside text states
     if (modeLabel) {
       if (isBreak) {
-        modeLabel.innerHTML = `<i class="ti ti-cup"></i> Break`;
+        modeLabel.innerHTML = `<i class="ti ti-cup" aria-hidden="true"></i> Break`;
       } else {
-        modeLabel.innerHTML = `<i class="ti ti-book"></i> Study`;
+        modeLabel.innerHTML = `<i class="ti ti-book" aria-hidden="true"></i> Study`;
       }
     }
   }
@@ -191,7 +200,8 @@ function initPomodoro() {
     if (remaining <= 0) {
       clearInterval(interval);
       isRunning = false;
-      startBtn.innerHTML = `<i class="ti ti-player-play"></i> Start`;
+      startBtn.innerHTML = `<i class="ti ti-player-play" aria-hidden="true"></i> Start`;
+      startBtn.setAttribute('aria-label', 'Start timer');
 
       if (!isBreak) {
         sessions = (sessions + 1) % 5;
@@ -215,12 +225,14 @@ function initPomodoro() {
     clearInterval(interval);
     isRunning  = false;
     // Upgraded to vector icon + text label state
-    startBtn.innerHTML = `<i class="ti ti-player-play"></i> Start`;
+    startBtn.innerHTML = `<i class="ti ti-player-play" aria-hidden="true"></i> Start`;
+    startBtn.setAttribute('aria-label', 'Start timer');
   } else {
     interval   = setInterval(tick, 1000);
     isRunning  = true;
     // Upgraded to vector icon + text label state
-    startBtn.innerHTML = `<i class="ti ti-player-pause"></i> Pause`;
+    startBtn.innerHTML = `<i class="ti ti-player-pause" aria-hidden="true"></i> Pause`;
+    startBtn.setAttribute('aria-label', 'Pause timer');
   }
   });
 
@@ -229,7 +241,8 @@ function initPomodoro() {
     isRunning  = false;
     isBreak    = false;
     remaining  = STUDY_SECS;
-    startBtn.textContent = '▶';
+    startBtn.innerHTML = `<i class="ti ti-player-play" aria-hidden="true"></i> Start`;
+    startBtn.setAttribute('aria-label', 'Start timer');
     updateDisplay();
   });
 
@@ -249,13 +262,13 @@ function showTimerCompleteModal(type) {
 
   if (type === 'study') {
     // Upgraded to celebratory confetti vectors
-    if (icon)  icon.innerHTML = `<i class="ti ti-confetti"></i>`;
+    if (icon)  icon.innerHTML = `<i class="ti ti-confetti" aria-hidden="true"></i>`;
     if (title) title.textContent = 'Session Complete!';
     if (msg)   msg.textContent   = 'Great work! Time for a 5-minute break.';
     launchConfetti(40);
   } else {
     // Upgraded to a strength/focus barbell or armchair vector instead of the muscle emoji
-    if (icon)  icon.innerHTML = `<i class="ti ti-barbell"></i>`;
+    if (icon)  icon.innerHTML = `<i class="ti ti-barbell" aria-hidden="true"></i>`;
     if (title) title.textContent = 'Break Over!';
     if (msg)   msg.textContent   = "Ready to dive back in? You've got this!";
   }
@@ -298,6 +311,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initLayout();
   initHeaderScroll();
   initDashboardData();
+  initQuoteRefresh();
   initCountdowns();
   initStats();
   initPomodoro();

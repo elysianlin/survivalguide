@@ -4,30 +4,34 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="GPA Calculator — compute your semester GPA from course grades and credits.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
   <title>GPA Calculator | Semester Survival Kit</title>
   <link rel="stylesheet" href="css/main.css">
 </head>
 <body>
+  <a class="skip-link" href="#main-content">Skip to main content</a>
 
   <header class="site-header" role="banner">
     <div class="header-inner">
       <a href="index.html" class="site-logo" aria-label="Semester Survival Kit home">
         <div class="logo-icon" aria-hidden="true">
-          <i class="ti ti-notebook"></i>
+          <i class="ti ti-notebook" aria-hidden="true"></i>
         </div>
         <span class="logo-text">Semester <span>Survival Kit</span></span>
       </a>
 
       <nav class="site-nav" aria-label="Primary navigation">
         <a href="index.html" class="nav-link">
-          <i class="ti ti-layout-dashboard nav-icon"></i> Dashboard
+          <i class="ti ti-layout-dashboard nav-icon" aria-hidden="true"></i> Dashboard
         </a>
         <a href="planner.html" class="nav-link">
-          <i class="ti ti-calendar-event nav-icon"></i> Planner
+          <i class="ti ti-calendar-event nav-icon" aria-hidden="true"></i> Planner
         </a>
         <a href="gpa.html" class="nav-link">
-          <i class="ti ti-report-analytics nav-icon"></i> GPA
+          <i class="ti ti-report-analytics nav-icon" aria-hidden="true"></i> GPA
         </a>
       </nav>
 
@@ -37,7 +41,7 @@
           <span class="gpa-value" id="header-gpa">—</span>
         </div>
         <button class="theme-toggle" id="theme-toggle" aria-label="Toggle dark mode">
-          <i class="ti ti-moon" id="theme-toggle-icon"></i>
+          <i class="ti ti-moon" id="theme-toggle-icon" aria-hidden="true"></i>
         </button>
       </div>
 
@@ -49,18 +53,18 @@
 
   <nav class="mobile-nav" id="mobile-nav" aria-label="Mobile navigation">
     <a href="index.html" class="nav-link">
-      <i class="ti ti-layout-dashboard nav-icon"></i> Dashboard
+      <i class="ti ti-layout-dashboard nav-icon" aria-hidden="true"></i> Dashboard
     </a>
     <a href="planner.html" class="nav-link">
-      <i class="ti ti-calendar-event nav-icon"></i> Planner
+      <i class="ti ti-calendar-event nav-icon" aria-hidden="true"></i> Planner
     </a>
     <a href="gpa.html" class="nav-link">
-      <i class="ti ti-report-analytics nav-icon"></i> GPA Calculator
+      <i class="ti ti-report-analytics nav-icon" aria-hidden="true"></i> GPA Calculator
     </a>
   </nav>
 
   <div class="page-wrapper">
-    <main class="main-content">
+    <main class="main-content" id="main-content">
 
       <div style="margin-bottom:var(--sp-8)">
         <h1 style="font-size:var(--fs-3xl); margin-bottom:var(--sp-2)">GPA Calculator</h1>
@@ -174,11 +178,11 @@
         </div>
 
         <div id="gpa-result-card" class="gpa-result-card">
-          <div class="gpa-result-label" style="opacity:0.75; margin-bottom:var(--sp-3)">Semester GPA</div>
+          <div class="gpa-result-label" style="opacity:0.92; margin-bottom:var(--sp-3)">Semester GPA</div>
           <div class="gpa-result-value" id="gpa-value">—</div>
           <div class="gpa-result-letter" id="gpa-letter"></div>
           <div style="margin-top:var(--sp-4); padding-top:var(--sp-4); border-top:1px solid rgba(255,255,255,0.2)">
-            <div style="font-size:var(--fs-sm); opacity:0.75; margin-bottom:var(--sp-1)" id="gpa-credits"></div>
+            <div style="font-size:var(--fs-sm); opacity:0.92; margin-bottom:var(--sp-1)" id="gpa-credits"></div>
             <div style="font-size:var(--fs-sm); font-weight:600" id="gpa-standing"></div>
           </div>
           <div id="gpa-chart"></div>

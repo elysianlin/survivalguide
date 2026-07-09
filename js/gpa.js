@@ -6,7 +6,10 @@
  */
 
 import { getGPACourses, saveGPACourses } from './storage.js';
-import { generateId, calculateGPA, gpaToLetter, isValidCredits, showToast } from './utils.js';
+import {
+  generateId, calculateGPA, gpaToLetter, isValidCredits, showToast,
+  confirmDialog, gpaStandingColors, getURLParam,
+} from './utils.js';
 import { initLayout } from './layout.js';
 
 // ================================================================
@@ -66,7 +69,13 @@ function renderCourses() {
     el.addEventListener('change', handleInlineEdit);
   });
   tbody.querySelectorAll('.delete-course-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
+    btn.addEventListener('click', async () => {
+      const course = courses.find(c => c.id === btn.dataset.id);
+      const ok = await confirmDialog(
+        `Remove "${course?.name || 'this course'}" from your GPA calculation?`,
+        { title: 'Remove Course', confirmLabel: 'Remove' }
+      );
+      if (!ok) return;
       courses = courses.filter(c => c.id !== btn.dataset.id);
       saveGPACourses(courses);
       renderCourses();
@@ -86,6 +95,12 @@ function gradePoints(g) { return GRADE_PTS[g] ?? 0; }
 // ================================================================
 // INLINE EDIT
 // ================================================================
+let saveDebounceTimer = null;
+function debouncedSave() {
+  clearTimeout(saveDebounceTimer);
+  saveDebounceTimer = setTimeout(() => saveGPACourses(courses), 300);
+}
+
 function handleInlineEdit(e) {
   const id    = e.target.dataset.id;
   const field = e.target.dataset.field;
@@ -96,15 +111,19 @@ function handleInlineEdit(e) {
   if (field === 'credits') {
     if (!isValidCredits(val)) {
       e.target.style.borderColor = 'var(--clr-danger)';
+      e.target.setAttribute('aria-invalid', 'true');
       return;
     }
     e.target.style.borderColor = '';
+    e.target.removeAttribute('aria-invalid');
     courses[idx].credits = Number(val);
   } else {
     courses[idx][field] = val;
   }
 
-  saveGPACourses(courses);
+  // Debounce the localStorage write (keystroke-level saves are wasteful);
+  // the GPA display itself still updates instantly for responsive feedback.
+  debouncedSave();
   updateGPADisplay();
   if (field === 'grade') renderCourses(); // refresh grade points column
 }
@@ -129,26 +148,17 @@ function updateGPADisplay() {
   }
   if (standEl)  standEl.textContent  = academicStanding(gpa);
 
-  // Color the result card
+  // Color the result card — always chosen so text stays WCAG-AA readable
   const card = document.getElementById('gpa-result-card');
-
-    if (card) {
-      if (gpa >= 3.7) {
-        card.style.background = '#914820ff';
-      } else if (gpa >= 3.0) {
-        card.style.background = '#085c0bff';
-      } else if (gpa >= 2.0) {
-        card.style.background = 'rgba(245, 223, 27, 1)';
-      } else if (gpa > 0) {
-        card.style.background = '#204D91';
-      } else {
-        card.style.background = 'var(--clr-primary)';
-      }
-    }
-
-      // Render chart
-      renderGPABar(courses);
+  if (card) {
+    const { bg, text } = gpaStandingColors(courses.length > 0 ? gpa : 0);
+    card.style.background = bg;
+    card.style.color = text;
   }
+
+  // Render chart
+  renderGPABar(courses);
+}
 
 function academicStanding(gpa) {
   if (gpa >= 3.9) return '🏆 Summa Cum Laude';
@@ -183,7 +193,7 @@ function renderGPABar(courses) {
           <div style="margin-bottom:var(--sp-3)">
             <div style="display:flex; justify-content:space-between; margin-bottom:4px">
               <span style="font-size:var(--fs-xs); font-weight:600; color:var(--clr-text-inverse)">${escHtml(c.name)}</span>
-              <span style="font-size:var(--fs-xs); color:rgba(255,255,255,0.75)">${c.grade} (${pts.toFixed(1)})</span>
+              <span style="font-size:var(--fs-xs); color:rgba(255,255,255,0.92)">${c.grade} (${pts.toFixed(1)})</span>
             </div>
             <div style="height:6px; background:rgba(255,255,255,0.2); border-radius:9999px; overflow:hidden;">
               <div style="width:${pct}%; height:100%; background:white; border-radius:9999px; transition:width 0.5s cubic-bezier(0.16,1,0.3,1);"></div>
@@ -244,14 +254,36 @@ function initAddCourse() {
 // CLEAR ALL
 // ================================================================
 function initClearAll() {
-  document.getElementById('clear-gpa-btn')?.addEventListener('click', () => {
-    if (!confirm('Clear all courses? This cannot be undone.')) return;
+  document.getElementById('clear-gpa-btn')?.addEventListener('click', async () => {
+    const ok = await confirmDialog('Clear all courses? This cannot be undone.', {
+      title: 'Clear All Courses', confirmLabel: 'Clear All',
+    });
+    if (!ok) return;
     courses = [];
     saveGPACourses(courses);
     renderCourses();
     updateGPADisplay();
     showToast('All courses cleared.', 'warning');
   });
+}
+
+// ================================================================
+// URL PARAMETER PREFILL — supports links like
+// gpa.html?course=WDD%20231&credits=3 from other pages (e.g. the planner),
+// so a student can jump straight from an assignment to logging that
+// course's grade without retyping anything.
+// ================================================================
+function prefillFromURL() {
+  const course  = getURLParam('course');
+  const credits = getURLParam('credits');
+  if (!course) return;
+
+  const nameInput    = document.getElementById('new-course-name');
+  const creditsInput = document.getElementById('new-course-credits');
+  if (nameInput) nameInput.value = course;
+  if (creditsInput && credits) creditsInput.value = credits;
+  document.getElementById('new-course-grade')?.focus();
+  showToast(`Pre-filled "${course}" from your planner — just pick a grade.`, '');
 }
 
 // ================================================================
@@ -264,4 +296,5 @@ document.addEventListener('DOMContentLoaded', () => {
   updateGPADisplay();
   initAddCourse();
   initClearAll();
+  prefillFromURL();
 });

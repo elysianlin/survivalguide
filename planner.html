@@ -4,18 +4,22 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Assignment Planner — manage all your tasks, deadlines, and exams in one place.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
   <title>Planner | Semester Survival Kit</title>
   <link rel="stylesheet" href="css/main.css">
 </head>
 <body>
+  <a class="skip-link" href="#main-content">Skip to main content</a>
 
   <!-- ===== HEADER (shared) ===== -->
   <header class="site-header" role="banner">
     <div class="header-inner">
       <a href="index.html" class="site-logo" aria-label="Semester Survival Kit home">
         <div class="logo-icon" aria-hidden="true">
-          <i class="ti ti-notebook"></i>
+          <i class="ti ti-notebook" aria-hidden="true"></i>
         </div>
         <span class="logo-text">Semester <span>Survival Kit</span></span>
       </a>
@@ -23,13 +27,13 @@
       <!-- Desktop Navigation -->
       <nav class="site-nav" aria-label="Primary navigation">
         <a href="index.html" class="nav-link">
-          <i class="ti ti-layout-dashboard nav-icon"></i> Dashboard
+          <i class="ti ti-layout-dashboard nav-icon" aria-hidden="true"></i> Dashboard
         </a>
         <a href="planner.html" class="nav-link">
-          <i class="ti ti-calendar-event nav-icon"></i> Planner
+          <i class="ti ti-calendar-event nav-icon" aria-hidden="true"></i> Planner
         </a>
         <a href="gpa.html" class="nav-link">
-          <i class="ti ti-report-analytics nav-icon"></i> GPA
+          <i class="ti ti-report-analytics nav-icon" aria-hidden="true"></i> GPA
         </a>
       </nav>
 
@@ -39,7 +43,7 @@
           <span class="gpa-value" id="header-gpa">—</span>
         </div>
         <button class="theme-toggle" id="theme-toggle" aria-label="Toggle dark mode">
-          <i class="ti ti-moon" id="theme-toggle-icon"></i>
+          <i class="ti ti-moon" id="theme-toggle-icon" aria-hidden="true"></i>
         </button>
       </div>
 
@@ -52,38 +56,38 @@
   <!-- Mobile Nav Drawer -->
   <nav class="mobile-nav" id="mobile-nav" aria-label="Mobile navigation">
     <a href="index.html" class="nav-link">
-      <i class="ti ti-layout-dashboard nav-icon"></i> Dashboard
+      <i class="ti ti-layout-dashboard nav-icon" aria-hidden="true"></i> Dashboard
     </a>
     <a href="planner.html" class="nav-link">
-      <i class="ti ti-calendar-event nav-icon"></i> Planner
+      <i class="ti ti-calendar-event nav-icon" aria-hidden="true"></i> Planner
     </a>
     <a href="gpa.html" class="nav-link">
-      <i class="ti ti-report-analytics nav-icon"></i> GPA Calculator
+      <i class="ti ti-report-analytics nav-icon" aria-hidden="true"></i> GPA Calculator
     </a>
   </nav>
   <!-- ===== MAIN ===== -->
   <div class="page-wrapper">
-    <main class="main-content">
+    <main class="main-content" id="main-content">
 
       <!-- Stats strip -->
       <div class="stats-grid fade-in-up" style="margin-bottom: var(--sp-6)">
-        <div class="stat-card" style="--card-accent:var(--clr-total;)">
-          <div class="stat-icon"><i class="ti ti-list-details"></i></div>
+        <div class="stat-card" style="--card-accent:var(--clr-total)">
+          <div class="stat-icon"><i class="ti ti-list-details" aria-hidden="true"></i></div>
           <div class="stat-value" id="stat-total">0</div>
           <div class="stat-label">Total</div>
         </div>
         <div class="stat-card" style="--card-accent:var(--clr-success)">
-          <div class="stat-icon"><i class="ti ti-circle-check"></i></div>
+          <div class="stat-icon"><i class="ti ti-circle-check" aria-hidden="true"></i></div>
           <div class="stat-value" id="stat-done">0</div>
           <div class="stat-label">Done</div>
         </div>
         <div class="stat-card" style="--card-accent:var(--clr-accent)">
-          <div class="stat-icon"><i class="ti ti-hourglass-high"></i></div>
+          <div class="stat-icon"><i class="ti ti-hourglass-high" aria-hidden="true"></i></div>
           <div class="stat-value" id="stat-pending">0</div>
           <div class="stat-label">Pending</div>
         </div>
         <div class="stat-card" style="--card-accent:var(--clr-danger)">
-          <div class="stat-icon"><i class="ti ti-alert-triangle"></i></div>
+          <div class="stat-icon"><i class="ti ti-alert-triangle" aria-hidden="true"></i></div>
           <div class="stat-value" id="stat-overdue">0</div>
           <div class="stat-label">Overdue</div>
         </div>
@@ -149,7 +153,7 @@
       <!-- Exam Section -->
       <section id="exams" style="margin-top: var(--sp-10)" class="fade-in-up">
         <h2 style="font-size:var(--fs-xl); margin-bottom:var(--sp-4); display: inline-flex; align-items: center; gap: var(--sp-2)">
-          <i class="ti ti-calendar-due" style="color: var(--clr-primary)"></i> Exam Countdown
+          <i class="ti ti-calendar-due" style="color: var(--clr-primary)" aria-hidden="true"></i> Exam Countdown
         </h2>
         <div class="exam-layout">
 
@@ -165,16 +169,20 @@
             <h3 style="font-size:var(--fs-md); margin-bottom:var(--sp-4)">Add Exam</h3>
             <form id="exam-form" novalidate>
               <div class="form-group" style="margin-bottom:var(--sp-3)">
-                <label for="exam-name">Exam Name</label>
-                <input type="text" id="exam-name" placeholder="Final Exam" required>
+                <label for="exam-name">Exam Name <span aria-hidden="true" style="color:var(--clr-danger)">*</span></label>
+                <input type="text" id="exam-name" placeholder="Final Exam" required aria-describedby="err-exam-name">
+                <span class="form-error" id="err-exam-name" aria-live="polite"></span>
               </div>
               <div class="form-group" style="margin-bottom:var(--sp-3)">
-                <label for="exam-course">Course</label>
-                <input type="text" id="exam-course" placeholder="WDD 231" list="course-datalist" required>
+                <label for="exam-course">Course <span aria-hidden="true" style="color:var(--clr-danger)">*</span></label>
+                <input type="text" id="exam-course" placeholder="WDD 231" list="exam-course-datalist" required aria-describedby="err-exam-course">
+                <datalist id="exam-course-datalist"></datalist>
+                <span class="form-error" id="err-exam-course" aria-live="polite"></span>
               </div>
               <div class="form-group" style="margin-bottom:var(--sp-5)">
-                <label for="exam-date">Exam Date</label>
-                <input type="date" id="exam-date" required>
+                <label for="exam-date">Exam Date <span aria-hidden="true" style="color:var(--clr-danger)">*</span></label>
+                <input type="date" id="exam-date" required aria-describedby="err-exam-date">
+                <span class="form-error" id="err-exam-date" aria-live="polite"></span>
               </div>
               <button type="submit" class="btn btn-primary" style="width:100%">Add Exam</button>
             </form>
