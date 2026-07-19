@@ -8,7 +8,7 @@
 import { getGPACourses, saveGPACourses, getSelectedCourses, saveSelectedCourses } from './storage.js';
 import {
   generateId, calculateGPA, gpaToLetter, isValidCredits, showToast,
-  confirmDialog, gpaStandingColors, getURLParam,
+  confirmDialog, gpaStandingColors, getURLParam, onIdle, escapeHtml,
 } from './utils.js';
 import { initLayout } from './layout.js';
 
@@ -21,7 +21,7 @@ let courses = [];
 // the student has picked for this semester via the course picker.
 let allCourses = [];
 let selectedCourses = [];
-const MAX_SELECTED_COURSES = 20;
+const MAX_SELECTED_COURSES = 10;
 
 // ================================================================
 // RENDER
@@ -46,7 +46,7 @@ function renderCourses() {
     <tr data-id="${c.id}">
       <td>
         <input type="text" class="course-name-input"
-          value="${escHtml(c.name)}" placeholder="e.g. WDD 231"
+          value="${escapeHtml(c.name)}" placeholder="e.g. WDD 231"
           data-id="${c.id}" data-field="name" aria-label="Course name">
       </td>
       <td>
@@ -89,10 +89,6 @@ function renderCourses() {
       showToast('Course removed.', 'warning');
     });
   });
-}
-
-function escHtml(str) {
-  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
 const GRADE_PTS = { 'A+':4.0,'A':4.0,'A-':3.7,'B+':3.3,'B':3.0,'B-':2.7,'C+':2.3,'C':2.0,'C-':1.7,'D+':1.3,'D':1.0,'D-':0.7,'F':0.0 };
@@ -188,7 +184,7 @@ function renderGPABar(courses) {
   const max = 4.0;
   container.innerHTML = `
     <div style="margin-top:var(--sp-4)">
-      <p class="text-xs text-muted font-semibold" style="margin-bottom:var(--sp-3); text-transform:uppercase; letter-spacing:0.06em;color:white;">Grade Breakdown</p>
+      <p class="text-xs text-muted font-semibold" style="margin-bottom:var(--sp-3); text-transform:uppercase; letter-spacing:0.06em;">Grade Breakdown</p>
       ${courses.filter(c => c.name).map(c => {
         const pts = gradePoints(c.grade);
         const pct = (pts / max) * 100;
@@ -198,7 +194,7 @@ function renderGPABar(courses) {
         return `
           <div style="margin-bottom:var(--sp-3)">
             <div style="display:flex; justify-content:space-between; margin-bottom:4px">
-              <span style="font-size:var(--fs-xs); font-weight:600; color:var(--clr-text-inverse)">${escHtml(c.name)}</span>
+              <span style="font-size:var(--fs-xs); font-weight:600; color:var(--clr-text-inverse)">${escapeHtml(c.name)}</span>
               <span style="font-size:var(--fs-xs); color:rgba(255,255,255,0.92)">${c.grade} (${pts.toFixed(1)})</span>
             </div>
             <div style="height:6px; background:rgba(255,255,255,0.2); border-radius:9999px; overflow:hidden;">
@@ -215,10 +211,6 @@ function renderGPABar(courses) {
 // MAX_SELECTED_COURSES for the semester. Once they've picked any,
 // the "Add a Course" field's datalist narrows to just those.
 // ================================================================
-function escAttr(str) {
-  return String(str).replace(/&/g,'&amp;').replace(/"/g,'&quot;');
-}
-
 async function loadCourseCatalog() {
   try {
     const res = await fetch('data/courses.json');
@@ -236,7 +228,7 @@ function updateGpaDatalist() {
   // fall back to the full catalog so nobody is blocked from adding a
   // course before using the picker.
   const source = selectedCourses.length > 0 ? selectedCourses : allCourses;
-  list.innerHTML = source.map(c => `<option value="${escAttr(c.code)}">`).join('');
+  list.innerHTML = source.map(c => `<option value="${escapeHtml(c.code)}">`).join('');
 }
 
 function renderSelectedChips() {
@@ -251,9 +243,9 @@ function renderSelectedChips() {
   }
 
   container.innerHTML = selectedCourses.map(c => `
-    <span class="course-chip" data-code="${escAttr(c.code)}">
-      ${escAttr(c.code)}
-      <button type="button" class="course-chip-remove" data-code="${escAttr(c.code)}" aria-label="Remove ${escAttr(c.code)}">✕</button>
+    <span class="course-chip" data-code="${escapeHtml(c.code)}">
+      ${escapeHtml(c.code)}
+      <button type="button" class="course-chip-remove" data-code="${escapeHtml(c.code)}" aria-label="Remove ${escapeHtml(c.code)}">✕</button>
     </span>`).join('');
 
   container.querySelectorAll('.course-chip-remove').forEach(btn => {
@@ -290,9 +282,9 @@ function renderCoursePickerResults(query) {
   }
 
   resultsEl.innerHTML = matches.map(c => `
-    <button type="button" class="course-picker-result-btn" data-code="${escAttr(c.code)}">
-      <span class="course-picker-result-code">${escAttr(c.code)}</span>
-      <span class="course-picker-result-name">${escAttr(c.name)}</span>
+    <button type="button" class="course-picker-result-btn" data-code="${escapeHtml(c.code)}">
+      <span class="course-picker-result-code">${escapeHtml(c.code)}</span>
+      <span class="course-picker-result-name">${escapeHtml(c.name)}</span>
     </button>`).join('');
   resultsEl.hidden = false;
 
@@ -321,10 +313,17 @@ function renderCoursePickerResults(query) {
 }
 
 async function initCoursePicker() {
-  await loadCourseCatalog();
+  // Selected courses (already picked, stored locally) render immediately —
+  // no network needed. The full catalog (courses.json) is much larger and
+  // only needed for search/autocomplete, so it's deferred to idle time.
   selectedCourses = getSelectedCourses();
   renderSelectedChips();
   updateGpaDatalist();
+
+  onIdle(async () => {
+    await loadCourseCatalog();
+    updateGpaDatalist();
+  });
 
   const searchInput = document.getElementById('course-picker-search');
   const resultsEl    = document.getElementById('course-picker-results');

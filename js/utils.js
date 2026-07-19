@@ -6,6 +6,20 @@
 // ---- ID Generation ----
 
 /**
+ * Run a callback once the browser is idle, or after a short fallback
+ * timeout. Used to defer non-critical work (like fetching the large
+ * courses.json catalog) so it doesn't compete with the initial render.
+ * @param {Function} fn
+ */
+export function onIdle(fn) {
+  if ('requestIdleCallback' in window) {
+    requestIdleCallback(fn, { timeout: 1500 });
+  } else {
+    setTimeout(fn, 200);
+  }
+}
+
+/**
  * Generate a unique ID string.
  * @returns {string}
  */
@@ -39,10 +53,13 @@ export function todayISO() {
 /**
  * Count calendar days between today and a due date string.
  * Positive = in the future, Negative = overdue.
+ * Returns Infinity for missing/invalid input so callers that sort or
+ * filter by "soonest due" push bad data to the end instead of crashing.
  * @param {string} dateStr  YYYY-MM-DD
  * @returns {number}
  */
 export function daysUntil(dateStr) {
+  if (!dateStr) return Infinity;
   const today = new Date();
   today.setHours(0, 0, 0, 0);
   const [y, m, d] = dateStr.split('-').map(Number);
@@ -63,6 +80,23 @@ export function dueDateClass(dateStr) {
 }
 
 // ---- Validation ----
+
+/**
+ * Escape a string for safe insertion into HTML text content or attribute
+ * values. Single shared implementation — previously gpa.js and planner.js
+ * each had their own near-duplicate copy, and gpa.js had a second,
+ * inconsistent one (escAttr) that escaped a different set of characters.
+ * @param {string} str
+ * @returns {string}
+ */
+export function escapeHtml(str) {
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
 
 /**
  * Validate assignment form fields.
@@ -187,6 +221,39 @@ export function qsAll(selector, context = document) {
   return Array.from(context.querySelectorAll(selector));
 }
 
+// ---- Focus Trap (accessibility: keep keyboard focus inside an open modal) ----
+
+/**
+ * Contain Tab/Shift+Tab focus movement within a container while it's open
+ * (e.g. a modal), so keyboard users can't tab out into the page behind it.
+ * @param {HTMLElement} container
+ * @returns {Function} cleanup function — call when the modal closes
+ */
+export function trapFocus(container) {
+  const selector = 'a[href], button:not([disabled]), textarea, input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])';
+
+  function handleKeydown(e) {
+    if (e.key !== 'Tab') return;
+    const focusable = Array.from(container.querySelectorAll(selector))
+      .filter(el => el.offsetParent !== null); // skip hidden elements
+    if (focusable.length === 0) return;
+
+    const first = focusable[0];
+    const last  = focusable[focusable.length - 1];
+
+    if (e.shiftKey && document.activeElement === first) {
+      e.preventDefault();
+      last.focus();
+    } else if (!e.shiftKey && document.activeElement === last) {
+      e.preventDefault();
+      first.focus();
+    }
+  }
+
+  container.addEventListener('keydown', handleKeydown);
+  return () => container.removeEventListener('keydown', handleKeydown);
+}
+
 // ---- Toast Notifications ----
 
 let toastContainer = null;
@@ -271,6 +338,7 @@ export function gpaToLetter(gpa) {
  */
 export function confirmDialog(message, opts = {}) {
   const { title = 'Please confirm', confirmLabel = 'Confirm', danger = true } = opts;
+  const previouslyFocused = document.activeElement;
 
   return new Promise(resolve => {
     const overlay = document.createElement('div');
@@ -293,11 +361,14 @@ export function confirmDialog(message, opts = {}) {
 
     // Trigger open transition on next frame
     requestAnimationFrame(() => overlay.classList.add('open'));
+    const releaseFocusTrap = trapFocus(overlay);
 
     function cleanup(result) {
       overlay.classList.remove('open');
       setTimeout(() => overlay.remove(), 200);
       document.removeEventListener('keydown', onKeydown);
+      releaseFocusTrap();
+      if (previouslyFocused instanceof HTMLElement) previouslyFocused.focus();
       resolve(result);
     }
     function onKeydown(e) {

@@ -11,7 +11,7 @@ import {
 import {
   generateId, formatDate, todayISO, daysUntil, dueDateClass,
   validateAssignment, showToast, launchConfetti, confirmDialog,
-  getURLParam, setURLParams, buildLink, onIdle,
+  getURLParam, setURLParams, buildLink, onIdle, escapeHtml, trapFocus,
 } from './utils.js';
 import { initLayout } from './layout.js';
 
@@ -80,9 +80,9 @@ function renderTable() {
             ${a.status === 'done' ? 'checked' : ''} title="Mark complete">
         </td>
         <td>
-          <div class="task-name">${escHtml(a.taskName)}</div>
+          <div class="task-name">${escapeHtml(a.taskName)}</div>
         </td>
-        <td><span class="task-course-code">${escHtml(a.courseName)}</span></td>
+        <td><span class="task-course-code">${escapeHtml(a.courseName)}</span></td>
         <td>
           <div class="due-date ${a.status === 'done' ? '' : dc}">
             ${formatDate(a.dueDate)}
@@ -94,7 +94,7 @@ function renderTable() {
         <td>
           <div class="row-actions">
             <a class="btn btn-ghost btn-icon" href="${buildLink('gpa.html', { course: a.courseName, credits: 3 })}"
-              title="Log a grade for this course" aria-label="Add ${escHtml(a.courseName)} to GPA calculator">
+              title="Log a grade for this course" aria-label="Add ${escapeHtml(a.courseName)} to GPA calculator">
               <i class="ti ti-report-analytics" aria-hidden="true"></i>
             </a>
             <button class="btn btn-ghost btn-icon edit-btn" data-id="${a.id}" title="Edit" aria-label="Edit assignment">
@@ -120,11 +120,6 @@ function renderTable() {
   });
 }
 
-function escHtml(str) {
-  return String(str)
-    .replace(/&/g, '&amp;').replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-}
 function cap(s) { return s ? s.charAt(0).toUpperCase() + s.slice(1) : ''; }
 function statusLabel(s) {
   return { pending: 'Pending', 'in-progress': 'In Progress', done: 'Done' }[s] || s;
@@ -138,7 +133,7 @@ function populateCourseFilter() {
   if (!sel) return;
   const courses = [...new Set(assignments.map(a => a.courseName))].sort();
   sel.innerHTML = `<option value="all">All Courses</option>` +
-    courses.map(c => `<option value="${escHtml(c)}">${escHtml(c)}</option>`).join('');
+    courses.map(c => `<option value="${escapeHtml(c)}">${escapeHtml(c)}</option>`).join('');
   if (filterCourse !== 'all') sel.value = filterCourse;
 }
 
@@ -291,13 +286,19 @@ function clearFormErrors() {
   ['courseName', 'taskName', 'dueDate', 'priority', 'status'].forEach(f => setFormError(f, ''));
 }
 
+let releaseModalFocusTrap = null;
+let modalTrigger = null;
+
 function openModal(title) {
   document.getElementById('modal-title').textContent = title;
   clearFormErrors();
   // Set min date to today to prevent past dates
   const dateInput = document.getElementById('f-date');
   if (dateInput && !editingId) dateInput.min = todayISO();
-  document.getElementById('assignment-modal').classList.add('open');
+  modalTrigger = document.activeElement;
+  const overlay = document.getElementById('assignment-modal');
+  overlay.classList.add('open');
+  releaseModalFocusTrap = trapFocus(overlay);
   document.getElementById('f-course')?.focus();
 }
 function closeModal() {
@@ -305,6 +306,10 @@ function closeModal() {
   editingId = null;
   document.getElementById('assignment-form')?.reset();
   clearFormErrors();
+  releaseModalFocusTrap?.();
+  releaseModalFocusTrap = null;
+  if (modalTrigger instanceof HTMLElement) modalTrigger.focus();
+  modalTrigger = null;
 }
 
 function openAddModal() {
@@ -394,8 +399,8 @@ function renderExams() {
         <div class="countdown-label">days</div>
       </div>
       <div class="countdown-info">
-        <div class="countdown-name">${escHtml(e.name)}</div>
-        <div class="countdown-course">${escHtml(e.course)} — ${formatDate(e.date)}</div>
+        <div class="countdown-name">${escapeHtml(e.name)}</div>
+        <div class="countdown-course">${escapeHtml(e.course)} — ${formatDate(e.date)}</div>
       </div>
       <button class="btn btn-ghost btn-icon btn-sm delete-exam-btn" data-id="${e.id}">
         <i class="ti ti-trash" aria-hidden="true"></i>
@@ -508,5 +513,12 @@ document.addEventListener('DOMContentLoaded', () => {
   // Close on overlay click
   document.getElementById('assignment-modal')?.addEventListener('click', e => {
     if (e.target === e.currentTarget) closeModal();
+  });
+
+  // Close on Escape
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && document.getElementById('assignment-modal')?.classList.contains('open')) {
+      closeModal();
+    }
   });
 });
