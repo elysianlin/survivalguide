@@ -7,12 +7,16 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap">
+  <link rel="preload" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.44.0/dist/tabler-icons.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.44.0/dist/tabler-icons.min.css"></noscript>
   <title>Dashboard | Semester Survival Kit</title>
 
   <!--
     CSS Architecture:
-      main.css uses @import to load all partials in order:
+      Each partial is linked directly so the browser can fetch them
+      all in parallel, instead of going through main.css's @import
+      chain (which forces a slow serial fetch waterfall):
         1. variables.css   — design tokens
         2. global.css      — resets, utilities, base elements
         3. header.css      — fixed nav bar
@@ -33,7 +37,12 @@
   <meta property="twitter:url" content="https://elysianlin.github.io/survivalguide/">
   <meta property="twitter:title" content="Semester Survival Kit | BYU-I Dashboard">
   <meta property="twitter:description" content="Your academic command center — built for BYU-Idaho students who refuse to fall behind. Track assignments, calculate your GPA, and time your study sessions.">
-  <meta property="twitter:image" content="https://elysianlin.github.io/survivalguide/images/social-preview.png">  <link rel="stylesheet" href="css/main.css">
+  <meta property="twitter:image" content="https://elysianlin.github.io/survivalguide/images/social-preview.png">
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/global.css">
+  <link rel="stylesheet" href="css/header.css">
+  <link rel="stylesheet" href="css/footer.css">
+  <link rel="stylesheet" href="css/pages.css">
 </head>
 <body>
   <a class="skip-link" href="#main-content">Skip to main content</a>
@@ -62,7 +71,7 @@
       </nav>
 
       <div class="header-actions">
-        <div class="gpa-pill" aria-label="Current GPA">
+        <div class="gpa-pill" role="group" aria-label="Current GPA">
           <span>GPA</span>
           <span class="gpa-value" id="header-gpa">—</span>
         </div>
@@ -199,7 +208,7 @@
               <button class="btn btn-primary" id="pomodoro-start" style="min-width:80px" aria-label="Start timer">▶</button>
             </div>
 
-            <div class="pomodoro-sessions" id="pomodoro-dots" aria-label="Completed sessions"></div>
+            <div class="pomodoro-sessions" id="pomodoro-dots" role="group" aria-label="Completed sessions"></div>
           </div>
 
         </div>

@@ -5,7 +5,7 @@
  */
 
 import { getAssignments, getExams } from './storage.js';
-import { daysUntil, showToast, launchConfetti } from './utils.js';
+import { daysUntil, showToast, launchConfetti, onIdle } from './utils.js';
 import { initLayout } from './layout.js';
 
 // ================================================================
@@ -33,43 +33,52 @@ function renderRandomQuote() {
   quoteAuthorEl.textContent = `— ${q.author}`;
 }
 
-async function initDashboardData() {
+// Runs a callback once the browser is idle (or after a short timeout as a
+// fallback) so non-critical work doesn't compete with the initial render.
+// (Shared implementation lives in utils.js — imported above.)
+
+async function initQuotes() {
   try {
-    // Fetch both JSON files simultaneously (single source of truth in /data)
-    const [quotesResponse, coursesResponse] = await Promise.all([
-      fetch('data/quotes.json'),
-      fetch('data/courses.json')
-    ]);
-
-    if (!quotesResponse.ok || !coursesResponse.ok) throw new Error('Data fetch failed');
-
-    allQuotes = await quotesResponse.json();
-    const courseData = await coursesResponse.json();
-    const courses = (courseData.departments || []).flatMap(d => d.courses);
-
-    // 1. Show a random quote
+    const res = await fetch('data/quotes.json');
+    if (!res.ok) throw new Error('Quotes fetch failed');
+    allQuotes = await res.json();
     renderRandomQuote();
-
-    // 2. Populate the "This Semester" course chips into the sidebar
-    const countdownList = document.getElementById('countdown-list');
-    if (countdownList && courses.length > 0 && countdownList.children.length === 0) {
-      const coursesHTML = courses.slice(0, 5).map(course => `
-        <div style="display:flex; justify-content:space-between; align-items:center; gap:var(--sp-3); padding:var(--sp-2) 0; border-bottom:1px solid var(--clr-border)">
-          <div>
-            <strong>${course.code}</strong>
-            <div style="font-size:var(--fs-xs); color:var(--clr-text-muted)">${course.name}</div>
-          </div>
-          <span class="badge badge-medium" style="background:${course.color}22; color:${course.color}">${course.credits} Cr</span>
-        </div>
-      `).join('');
-      countdownList.insertAdjacentHTML('afterbegin', coursesHTML);
-    }
-
   } catch (error) {
-    console.error("Error loading JSON data:", error);
+    console.error("Error loading quotes:", error);
     const quoteTextEl = document.getElementById('quote-text');
     if (quoteTextEl) quoteTextEl.textContent = "Keep going — you've got this!";
   }
+}
+
+// The full course catalog (courses.json) is a large file only needed for
+// the "This Semester" sidebar chips — below-the-fold, non-critical content.
+// Deferring it to idle time keeps it from competing with fonts/CSS/quotes
+// for bandwidth and main-thread parse time during the initial render.
+function initCourseChips() {
+  onIdle(async () => {
+    try {
+      const res = await fetch('data/courses.json');
+      if (!res.ok) throw new Error('Courses fetch failed');
+      const courseData = await res.json();
+      const courses = (courseData.departments || []).flatMap(d => d.courses);
+
+      const countdownList = document.getElementById('countdown-list');
+      if (countdownList && courses.length > 0 && countdownList.children.length === 0) {
+        const coursesHTML = courses.slice(0, 5).map(course => `
+          <div style="display:flex; justify-content:space-between; align-items:center; gap:var(--sp-3); padding:var(--sp-2) 0; border-bottom:1px solid var(--clr-border)">
+            <div>
+              <strong>${course.code}</strong>
+              <div style="font-size:var(--fs-xs); color:var(--clr-text-muted)">${course.name}</div>
+            </div>
+            <span class="badge badge-medium" style="background:${course.color}22; color:${course.color}">${course.credits} Cr</span>
+          </div>
+        `).join('');
+        countdownList.insertAdjacentHTML('afterbegin', coursesHTML);
+      }
+    } catch (error) {
+      console.error("Error loading course chips:", error);
+    }
+  });
 }
 
 // Quote refresh button now cycles through the fetched list instead of reloading
@@ -310,7 +319,8 @@ function initNewsletter() {
 document.addEventListener('DOMContentLoaded', () => {
   initLayout();
   initHeaderScroll();
-  initDashboardData();
+  initQuotes();
+  initCourseChips();
   initQuoteRefresh();
   initCountdowns();
   initStats();

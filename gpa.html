@@ -7,9 +7,15 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap">
+  <link rel="preload" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.44.0/dist/tabler-icons.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.44.0/dist/tabler-icons.min.css"></noscript>
   <title>GPA Calculator | Semester Survival Kit</title>
-  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/global.css">
+  <link rel="stylesheet" href="css/header.css">
+  <link rel="stylesheet" href="css/footer.css">
+  <link rel="stylesheet" href="css/pages.css">
 </head>
 <body>
   <a class="skip-link" href="#main-content">Skip to main content</a>
@@ -36,7 +42,7 @@
       </nav>
 
       <div class="header-actions">
-        <div class="gpa-pill" aria-label="Current GPA">
+        <div class="gpa-pill" role="group" aria-label="Current GPA">
           <span>GPA</span>
           <span class="gpa-value" id="header-gpa">—</span>
         </div>
@@ -74,10 +80,26 @@
       <div class="gpa-layout fade-in-up">
 
         <div>
+          <div class="card" id="course-picker-card" style="margin-bottom:var(--sp-6)">
+            <h2 style="font-size:var(--fs-lg); margin-bottom:var(--sp-2)">Select Your Courses</h2>
+            <p class="text-muted text-sm" style="margin-bottom:var(--sp-4)">Search and pick the courses you're taking this semester (up to 10). The Course field below — and the course dropdowns on the Planner's Add Assignment and Add Exam forms — will then only suggest these.</p>
+
+            <div class="form-group course-picker-wrap">
+              <label for="course-picker-search">Search Courses</label>
+              <input type="text" id="course-picker-search" placeholder="Type a course code or name…" autocomplete="off" aria-describedby="course-picker-count">
+              <div class="course-picker-results" id="course-picker-results" hidden></div>
+            </div>
+
+            <p class="course-picker-count" id="course-picker-count">0 / 10 selected</p>
+            <div class="selected-courses-chips" id="selected-courses-chips">
+              <span class="course-picker-empty">No courses selected yet — the Course field below will show the full catalog.</span>
+            </div>
+          </div>
+
           <div class="card" style="margin-bottom:var(--sp-6)">
             <h2 style="font-size:var(--fs-lg); margin-bottom:var(--sp-5)">Add a Course</h2>
             <form id="add-course-form" novalidate>
-              <div style="display:grid; grid-template-columns:1fr auto auto auto; gap:var(--sp-3); align-items:end">
+              <div class="gpa-add-course-grid">
 
                 <div class="form-group">
                   <label for="new-course-name">Course</label>
@@ -86,13 +108,13 @@
                   <datalist id="gpa-course-datalist"></datalist>
                 </div>
 
-                <div class="form-group" style="min-width:90px">
+                <div class="form-group gpa-add-course-credits">
                   <label for="new-course-credits">Credits</label>
                   <input type="number" id="new-course-credits"
-                    min="1" max="5" step="1" value="3" required style="max-width:90px">
+                    min="1" max="5" step="1" value="3" required>
                 </div>
 
-                <div class="form-group" style="min-width:110px">
+                <div class="form-group gpa-add-course-grade">
                   <label for="new-course-grade">Grade</label>
                   <select id="new-course-grade" required>
                     <option value="">Grade…</option>
@@ -104,7 +126,7 @@
                   </select>
                 </div>
 
-                <button type="submit" class="btn btn-primary" style="margin-bottom:calc(var(--fs-xs) + var(--sp-2) + 4px)">+ Add</button>
+                <button type="submit" class="btn btn-primary gpa-add-course-btn">+ Add</button>
               </div>
               <p class="form-error" id="add-course-error" aria-live="polite"></p>
             </form>

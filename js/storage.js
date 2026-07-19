@@ -11,6 +11,7 @@ const KEYS = {
   HISTORY:      'ssk_completed_history',
   EXAMS:        'ssk_exams',
   NEWSLETTER:   'ssk_newsletter_email',
+  SELECTED_COURSES: 'ssk_selected_courses',
 };
 
 /**
@@ -158,6 +159,17 @@ function saveNewsletterEmail(email) {
   save(KEYS.NEWSLETTER, email);
 }
 
+// ---- Selected Courses (GPA page course picker) ----
+// Stores the small set of courses ("up to 10") a student picks for the
+// semester so the "Add a Course" field can suggest just those instead of
+// the entire BYU-I catalog.
+function getSelectedCourses() {
+  return load(KEYS.SELECTED_COURSES, []);
+}
+function saveSelectedCourses(courses) {
+  save(KEYS.SELECTED_COURSES, courses);
+}
+
 export {
   KEYS,
   save, load, remove, clearAll,
@@ -167,4 +179,5 @@ export {
   getGPACourses, saveGPACourses,
   getTheme, saveTheme,
   getNewsletterEmail, saveNewsletterEmail,
+  getSelectedCourses, saveSelectedCourses,
 };

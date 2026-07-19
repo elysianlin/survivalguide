@@ -6,12 +6,12 @@
 
 import {
   getAssignments, upsertAssignment, deleteAssignment, completeAssignment,
-  getExams, saveExams,
+  getExams, saveExams, getSelectedCourses,
 } from './storage.js';
 import {
   generateId, formatDate, todayISO, daysUntil, dueDateClass,
   validateAssignment, showToast, launchConfetti, confirmDialog,
-  getURLParam, setURLParams, buildLink,
+  getURLParam, setURLParams, buildLink, onIdle,
 } from './utils.js';
 import { initLayout } from './layout.js';
 
@@ -358,8 +358,14 @@ async function initCourseDatalist() {
     const res = await fetch('data/courses.json');
     if (!res.ok) throw new Error('Course data unavailable');
     const data = await res.json();
-    const all = data.departments.flatMap(d => d.courses.map(c => c.code));
-    const optionsHTML = all.map(c => `<option value="${c}">`).join('');
+    const allCodes = data.departments.flatMap(d => d.courses.map(c => c.code));
+
+    // Same "selected courses" list the student picks on the GPA page —
+    // shared via localStorage so every course dropdown site-wide narrows
+    // to just their semester's courses instead of the full catalog.
+    const selected = getSelectedCourses();
+    const codes = selected.length > 0 ? selected.map(c => c.code) : allCodes;
+    const optionsHTML = codes.map(c => `<option value="${c}">`).join('');
 
     // Populate every course datalist on the page (assignment modal + exam form)
     ['course-datalist', 'exam-course-datalist'].forEach(id => {
@@ -482,7 +488,7 @@ document.addEventListener('DOMContentLoaded', () => {
   updateStats();
   initFilters();
   initSort();
-  initCourseDatalist();
+  onIdle(initCourseDatalist);
   renderExams();
   initExamForm();
 

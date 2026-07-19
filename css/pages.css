@@ -502,6 +502,124 @@
   font-size: var(--fs-sm);
 }
 
+/* Add-a-course form (was inline-styled in gpa.html — moved here so
+   it can actually respond to the breakpoints below) */
+.gpa-add-course-grid {
+  display: grid;
+  grid-template-columns: 1fr auto auto auto;
+  gap: var(--sp-3);
+  align-items: end;
+}
+.gpa-add-course-credits { min-width: 90px; }
+.gpa-add-course-credits input { max-width: 90px; }
+.gpa-add-course-grade { min-width: 110px; }
+.gpa-add-course-btn {
+  max-height: 90px;
+  margin: 4px 0;;
+}
+
+/* Course picker — "select your courses first" */
+.course-picker-wrap {
+  position: relative;
+}
+.course-picker-results {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  background: var(--clr-surface);
+  border: 1.5px solid var(--clr-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+  max-height: 240px;
+  overflow-y: auto;
+  z-index: 20;
+}
+.course-picker-result-btn {
+  display: flex;
+  align-items: baseline;
+  gap: var(--sp-2);
+  width: 100%;
+  text-align: left;
+  padding: var(--sp-2) var(--sp-4);
+  background: none;
+  border: none;
+  border-bottom: 1px solid var(--clr-surface-2);
+  cursor: pointer;
+}
+.course-picker-result-btn:last-child { border-bottom: none; }
+.course-picker-result-btn:hover,
+.course-picker-result-btn:focus-visible {
+  background: var(--clr-surface-2);
+}
+.course-picker-result-code {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  font-size: var(--fs-sm);
+  color: var(--clr-primary);
+  flex-shrink: 0;
+}
+.course-picker-result-name {
+  font-size: var(--fs-xs);
+  color: var(--clr-text-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.course-picker-no-results {
+  padding: var(--sp-3) var(--sp-4);
+  font-size: var(--fs-sm);
+  color: var(--clr-text-muted);
+}
+.course-picker-count {
+  font-size: var(--fs-xs);
+  color: var(--clr-text-muted);
+  margin-top: var(--sp-3);
+}
+.selected-courses-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-2);
+  margin-top: var(--sp-2);
+}
+.course-picker-empty {
+  font-size: var(--fs-xs);
+  color: var(--clr-text-muted);
+  font-style: italic;
+}
+.course-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-2);
+  background: var(--clr-surface-2);
+  border: 1.5px solid var(--clr-border);
+  border-radius: var(--radius-full);
+  padding: 4px var(--sp-2) 4px var(--sp-3);
+  font-family: var(--font-mono);
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  color: var(--clr-text);
+}
+.course-chip-remove {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: none;
+  border: none;
+  color: var(--clr-text-muted);
+  font-size: 0.7rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: background var(--transition-fast), color var(--transition-fast);
+}
+.course-chip-remove:hover {
+  background: var(--clr-danger);
+  color: #fff;
+}
+
 /* ==========================================
    MODAL (shared)
    ========================================== */
@@ -722,6 +840,44 @@ a:focus-visible {
 }
 @media (max-width: 480px) {
   .stats-grid { grid-template-columns: 1fr; }
+}
+
+/* GPA Calculator — small screens */
+@media (max-width: 640px) {
+  .gpa-add-course-grid {
+    grid-template-columns: 1fr;
+  }
+  .gpa-add-course-credits,
+  .gpa-add-course-grade {
+    min-width: 0;
+    width: 100%;
+  }
+  .gpa-add-course-credits input {
+    max-width: 100%;
+  }
+  .gpa-add-course-btn {
+    margin-bottom: 0;
+    width: 100%;
+  }
+  .gpa-courses-table th:nth-child(2),
+  .gpa-courses-table td:nth-child(2) {
+    /* Credits column: keep visible but tighten padding so the table
+       doesn't force horizontal scroll on narrow phones */
+    padding-inline: var(--sp-2);
+  }
+}
+
+/* Extra tightening for very narrow phones (iPhone SE and similar) */
+@media (max-width: 380px) {
+  .gpa-layout .card {
+    padding: var(--sp-4);
+  }
+  .course-picker-results {
+    max-height: 180px;
+  }
+  .course-chip {
+    font-size: 10px;
+  }
 }
 
 @media (max-width: 600px) {

@@ -5,7 +5,7 @@
  * Used by gpa.html
  */
 
-import { getGPACourses, saveGPACourses } from './storage.js';
+import { getGPACourses, saveGPACourses, getSelectedCourses, saveSelectedCourses } from './storage.js';
 import {
   generateId, calculateGPA, gpaToLetter, isValidCredits, showToast,
   confirmDialog, gpaStandingColors, getURLParam,
@@ -16,6 +16,12 @@ import { initLayout } from './layout.js';
 // STATE
 // ================================================================
 let courses = [];
+
+// Full BYU-I catalog (flattened) once fetched, and the small subset
+// the student has picked for this semester via the course picker.
+let allCourses = [];
+let selectedCourses = [];
+const MAX_SELECTED_COURSES = 20;
 
 // ================================================================
 // RENDER
@@ -182,7 +188,7 @@ function renderGPABar(courses) {
   const max = 4.0;
   container.innerHTML = `
     <div style="margin-top:var(--sp-4)">
-      <p class="text-xs text-muted font-semibold" style="margin-bottom:var(--sp-3); text-transform:uppercase; letter-spacing:0.06em;">Grade Breakdown</p>
+      <p class="text-xs text-muted font-semibold" style="margin-bottom:var(--sp-3); text-transform:uppercase; letter-spacing:0.06em;color:white;">Grade Breakdown</p>
       ${courses.filter(c => c.name).map(c => {
         const pts = gradePoints(c.grade);
         const pct = (pts / max) * 100;
@@ -204,21 +210,145 @@ function renderGPABar(courses) {
 }
 
 // ================================================================
+// COURSE PICKER — "select your courses first"
+// Lets the student search the full BYU-I catalog and pick up to
+// MAX_SELECTED_COURSES for the semester. Once they've picked any,
+// the "Add a Course" field's datalist narrows to just those.
+// ================================================================
+function escAttr(str) {
+  return String(str).replace(/&/g,'&amp;').replace(/"/g,'&quot;');
+}
+
+async function loadCourseCatalog() {
+  try {
+    const res = await fetch('data/courses.json');
+    const data = await res.json();
+    allCourses = (data.departments || []).flatMap(d => d.courses);
+  } catch {
+    allCourses = [];
+  }
+}
+
+function updateGpaDatalist() {
+  const list = document.getElementById('gpa-course-datalist');
+  if (!list) return;
+  // If the student has picked courses, only suggest those; otherwise
+  // fall back to the full catalog so nobody is blocked from adding a
+  // course before using the picker.
+  const source = selectedCourses.length > 0 ? selectedCourses : allCourses;
+  list.innerHTML = source.map(c => `<option value="${escAttr(c.code)}">`).join('');
+}
+
+function renderSelectedChips() {
+  const container = document.getElementById('selected-courses-chips');
+  const countEl    = document.getElementById('course-picker-count');
+  if (countEl) countEl.textContent = `${selectedCourses.length} / ${MAX_SELECTED_COURSES} selected`;
+  if (!container) return;
+
+  if (selectedCourses.length === 0) {
+    container.innerHTML = `<span class="course-picker-empty">No courses selected yet — the Course field below will show the full catalog.</span>`;
+    return;
+  }
+
+  container.innerHTML = selectedCourses.map(c => `
+    <span class="course-chip" data-code="${escAttr(c.code)}">
+      ${escAttr(c.code)}
+      <button type="button" class="course-chip-remove" data-code="${escAttr(c.code)}" aria-label="Remove ${escAttr(c.code)}">✕</button>
+    </span>`).join('');
+
+  container.querySelectorAll('.course-chip-remove').forEach(btn => {
+    btn.addEventListener('click', () => {
+      selectedCourses = selectedCourses.filter(c => c.code !== btn.dataset.code);
+      saveSelectedCourses(selectedCourses);
+      renderSelectedChips();
+      updateGpaDatalist();
+    });
+  });
+}
+
+function renderCoursePickerResults(query) {
+  const resultsEl = document.getElementById('course-picker-results');
+  if (!resultsEl) return;
+
+  const q = query.trim().toLowerCase();
+  if (!q) {
+    resultsEl.hidden = true;
+    resultsEl.innerHTML = '';
+    return;
+  }
+
+  const selectedCodes = new Set(selectedCourses.map(c => c.code));
+  const matches = allCourses
+    .filter(c => !selectedCodes.has(c.code))
+    .filter(c => c.code.toLowerCase().includes(q) || c.name.toLowerCase().includes(q))
+    .slice(0, 8);
+
+  if (matches.length === 0) {
+    resultsEl.innerHTML = `<div class="course-picker-no-results">No matching courses.</div>`;
+    resultsEl.hidden = false;
+    return;
+  }
+
+  resultsEl.innerHTML = matches.map(c => `
+    <button type="button" class="course-picker-result-btn" data-code="${escAttr(c.code)}">
+      <span class="course-picker-result-code">${escAttr(c.code)}</span>
+      <span class="course-picker-result-name">${escAttr(c.name)}</span>
+    </button>`).join('');
+  resultsEl.hidden = false;
+
+  resultsEl.querySelectorAll('.course-picker-result-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const course = allCourses.find(c => c.code === btn.dataset.code);
+      if (!course) return;
+
+      if (selectedCourses.length >= MAX_SELECTED_COURSES) {
+        showToast(`You can select up to ${MAX_SELECTED_COURSES} courses.`, 'warning');
+        return;
+      }
+
+      selectedCourses.push({ code: course.code, name: course.name });
+      saveSelectedCourses(selectedCourses);
+      renderSelectedChips();
+      updateGpaDatalist();
+      showToast(`${course.code} added to your course list.`, 'success');
+
+      const searchInput = document.getElementById('course-picker-search');
+      if (searchInput) searchInput.value = '';
+      resultsEl.hidden = true;
+      resultsEl.innerHTML = '';
+    });
+  });
+}
+
+async function initCoursePicker() {
+  await loadCourseCatalog();
+  selectedCourses = getSelectedCourses();
+  renderSelectedChips();
+  updateGpaDatalist();
+
+  const searchInput = document.getElementById('course-picker-search');
+  const resultsEl    = document.getElementById('course-picker-results');
+  if (!searchInput || !resultsEl) return;
+
+  searchInput.addEventListener('input', () => renderCoursePickerResults(searchInput.value));
+  searchInput.addEventListener('focus', () => {
+    if (searchInput.value.trim()) renderCoursePickerResults(searchInput.value);
+  });
+
+  // Close the results dropdown when clicking elsewhere
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('.course-picker-wrap')) {
+      resultsEl.hidden = true;
+    }
+  });
+}
+
+// ================================================================
 // ADD COURSE
 // ================================================================
 function initAddCourse() {
   const form = document.getElementById('add-course-form');
   if (!form) return;
-
-  // Populate course datalist
-  fetch('data/courses.json')
-    .then(r => r.json())
-    .then(data => {
-      const list = document.getElementById('gpa-course-datalist');
-      if (!list) return;
-      const all = data.departments.flatMap(d => d.courses.map(c => c.code));
-      list.innerHTML = all.map(c => `<option value="${c}">`).join('');
-    }).catch(() => {});
 
   form.addEventListener('submit', e => {
     e.preventDefault();
@@ -294,6 +424,7 @@ document.addEventListener('DOMContentLoaded', () => {
   courses = getGPACourses();
   renderCourses();
   updateGPADisplay();
+  initCoursePicker();
   initAddCourse();
   initClearAll();
   prefillFromURL();
